@@ -1,8 +1,18 @@
 {
   "permissions": {
-    "allow": []
+    "allow": [
+      "Read(*)",
+      "Update(*)",
+      "Write(*)",
+      "Edit(*)",
+      "Bash(docker *)",
+      "Bash(cp *)",
+      "Bash(cat *)",
+      "Bash(gh *)",
+      "Bash(gcloud *)",
+      "Bash(curl *)"
+    ]
   },
-  "syntaxHighlightingDisabled": true,
   "hooks": {
     "Stop": [
       {
@@ -14,5 +24,6 @@
         ]
       }
     ]
-  }
+  },
+  "syntaxHighlightingDisabled": true
 }

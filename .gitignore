@@ -1,0 +1,15 @@
+cache/
+debug/
+file-history/
+ide/
+image-cache/
+plans/
+projects/
+plugins/
+shell-snapshots/
+telemetry/
+todos/
+statsig/
+stats-cache.json
+.credentials.json
+history.jsonl

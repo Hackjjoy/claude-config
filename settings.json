@@ -10,7 +10,9 @@
       "Bash(cat *)",
       "Bash(gh *)",
       "Bash(gcloud *)",
-      "Bash(curl *)"
+      "Bash(curl *)",
+      "Web Search(*)",
+      "Fetch(*)"
     ]
   },
   "hooks": {

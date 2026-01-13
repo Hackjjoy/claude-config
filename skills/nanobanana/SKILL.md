@@ -5,7 +5,7 @@ description: Generate game asset images with transparent backgrounds using Gemin
 
 # Nanobanana - Game Asset Image Generator
 
-Generate 2D game assets with Gemini API, optimized for background removal.
+Generate 2D game assets with Gemini API. Automatically removes background using rembg.
 
 ## Quick Start
 
@@ -13,14 +13,17 @@ Generate 2D game assets with Gemini API, optimized for background removal.
 node scripts/generate-image.mjs "<subject>" [output.png]
 ```
 
-Requires: `GEMINI_API_KEY` environment variable
+Requires:
+- `GEMINI_API_KEY` environment variable
+- `rembg` installed (`pip install rembg`)
 
 ## Workflow
 
 1. User describes the game asset they need
 2. Run the generation script with the subject
-3. Image is saved with green background for easy removal
-4. Use rembg or image editor to remove background
+3. Gemini generates image with green background
+4. rembg automatically removes background
+5. Final PNG with transparent background is saved
 
 ## Prompt Formula
 
@@ -46,17 +49,6 @@ node scripts/generate-image.mjs "red health potion bottle, flat design" potion.p
 
 # Magic effect
 node scripts/generate-image.mjs "blue fireball with glow, VFX style" fireball.png
-```
-
-## Background Removal
-
-After generation, remove the green background:
-
-```bash
-# Using rembg (pip install rembg)
-rembg i input.png output.png
-
-# Or use online tools: remove.bg
 ```
 
 ## Style Keywords

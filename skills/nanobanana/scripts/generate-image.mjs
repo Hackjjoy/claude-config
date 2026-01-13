@@ -9,6 +9,7 @@
  */
 
 import { GoogleGenAI } from '@google/genai';
+import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
@@ -61,6 +62,16 @@ async function generateImage(prompt) {
 }
 
 /**
+ * Remove background using rembg
+ * @param {string} inputPath - Input image path
+ * @param {string} outputPath - Output image path
+ */
+function removeBackground(inputPath, outputPath) {
+  console.log('Removing background with rembg...');
+  execSync(`rembg i "${inputPath}" "${outputPath}"`, { stdio: 'inherit' });
+}
+
+/**
  * Main function
  */
 async function main() {
@@ -87,11 +98,19 @@ async function main() {
     const imageBuffer = await generateImage(prompt);
 
     const outputPath = path.resolve(outputFile);
-    fs.writeFileSync(outputPath, imageBuffer);
+    const tempPath = outputPath.replace(/\.png$/, '_raw.png');
 
-    console.log(`Image saved: ${outputPath}`);
-    console.log('');
-    console.log('Next step: Remove green background using rembg or image editor');
+    // Save raw image
+    fs.writeFileSync(tempPath, imageBuffer);
+    console.log(`Raw image saved: ${tempPath}`);
+
+    // Remove background
+    removeBackground(tempPath, outputPath);
+
+    // Clean up temp file
+    fs.unlinkSync(tempPath);
+
+    console.log(`Final image saved: ${outputPath}`);
   } catch (error) {
     console.error('Error:', error.message);
     process.exit(1);

@@ -11,6 +11,8 @@ telemetry/
 todos/
 statsig/
 paste-cache/
+tasks/
+transcripts/
 stats-cache.json
 .credentials.json
 history.jsonl

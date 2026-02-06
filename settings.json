@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm install *)",
+      "Bash(prompt*)",
+      "Bash(git commit *)",
+      "Bash(npm install*)",
       "Read(*)",
       "Update(*)",
       "Write(*)",
@@ -19,6 +21,16 @@
   },
   "hooks": {
     "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/hackjoy/.claude/hooks/urgency-hint.sh"
+          }
+        ]
+      }
+    ],
+    "Notification": [
       {
         "hooks": [
           {

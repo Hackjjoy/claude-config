@@ -8,7 +8,6 @@
 
 ## Environment
 
-* Running on **WSL (Windows Subsystem for Linux)** on Windows
 * Do not use UTF-8 emoji in terminal output
 
 ### Naming Conventions

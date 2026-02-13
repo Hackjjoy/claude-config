@@ -21,11 +21,15 @@ Meta-skill that evolves the skill ecosystem by learning from conversation sessio
    - `get_error_solutions` — find error patterns that skills could prevent
    - `find_tool_patterns` — discover workflow patterns worth codifying
 
-2. **Read all existing skills** from `/home/hackjoy/.claude/skills/*/SKILL.md`
+2. **Read all existing skills** from `~/.claude/skills/*/SKILL.md`
    - Catalog each skill's purpose, triggers, and workflow
    - Note gaps between what skills offer and what sessions reveal
 
-3. **Analyze the current session** for:
+3. **Read system CLAUDE.md** from `~/.claude/CLAUDE.md`
+   - Review global rules, conventions, and environment settings
+   - Check if session learnings reveal missing rules, outdated conventions, or new patterns worth codifying
+
+4. **Analyze the current session** for:
    - Workarounds or manual steps that could be automated
    - Repeated prompt patterns that suggest a missing skill
    - Corrections or refinements to skill outputs
@@ -42,6 +46,7 @@ Classify findings into:
 | **Workflow Improvement** | Update SKILL.md body | Better steps discovered through usage |
 | **Script Enhancement** | Update scripts/ | Bug fix or optimization found in session |
 | **Stale Content** | Update or remove | Outdated references or deprecated approaches |
+| **CLAUDE.md Rule** | Update CLAUDE.md | New convention, missing rule, or outdated setting discovered in session |
 
 ### Phase 3: Propose Changes
 
@@ -50,8 +55,8 @@ For each identified opportunity, present to the user:
 ```
 ## Proposed Change [N]
 
-**Type**: [New Skill | Skill Update | Trigger Update | Script Fix]
-**Target**: [skill-name or "new: proposed-name"]
+**Type**: [New Skill | Skill Update | Trigger Update | Script Fix | CLAUDE.md Update]
+**Target**: [skill-name or "new: proposed-name" or "CLAUDE.md"]
 **Reason**: [What was learned and why this change helps]
 
 ### Current State
@@ -73,9 +78,10 @@ Only after explicit user confirmation for each change:
 1. **For skill updates**: Edit the target SKILL.md using the Edit tool
 2. **For new skills**: Use dan-skill-creator to initialize and populate
 3. **For script changes**: Edit the target script file
-4. **Validate** each modified skill:
+4. **For CLAUDE.md updates**: Edit `~/.claude/CLAUDE.md` using the Edit tool
+5. **Validate** each modified skill:
    ```bash
-   python /home/hackjoy/.claude/skills/dan-skill-creator/scripts/quick_validate.py <path/to/skill>
+   python ~/.claude/skills/dan-skill-creator/scripts/quick_validate.py <path/to/skill>
    ```
 
 ### Phase 5: Summary Report

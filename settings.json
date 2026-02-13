@@ -25,7 +25,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/home/hackjoy/.claude/hooks/urgency-hint.sh"
+            "command": "~/.claude/hooks/urgency-hint.sh"
           }
         ]
       }
@@ -35,11 +35,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/home/hackjoy/.claude/hooks/urgency-hint.sh"
+            "command": "~/.claude/hooks/urgency-hint.sh"
           }
         ]
       }
     ]
   },
-  "syntaxHighlightingDisabled": true
+  "syntaxHighlightingDisabled": true,
+  "skipDangerousModePermissionPrompt": true
 }

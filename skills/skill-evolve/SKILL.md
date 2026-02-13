@@ -5,35 +5,35 @@ description: Analyze conversation sessions to improve existing skills or create 
 
 # Skill Evolve
 
-Meta-skill that evolves the skill ecosystem by learning from conversation sessions.
+Meta-skill that evolves the skill ecosystem by learning from the **current conversation session only**.
 
 ## Core Principle
 
 **Never modify any skill without explicit user confirmation.** Always present proposed changes clearly, explain reasoning, and wait for approval.
 
+## Scope
+
+This skill analyzes only the current conversation session context. It does NOT search historical conversation data. All insights come from what happened in this session.
+
 ## Workflow
 
 ### Phase 1: Gather Intelligence
 
-1. **Scan conversation history** using claude-historian-mcp:
-   - `search_conversations` — find patterns, recurring tasks, pain points
-   - `find_similar_queries` — identify repeated questions that could be automated
-   - `get_error_solutions` — find error patterns that skills could prevent
-   - `find_tool_patterns` — discover workflow patterns worth codifying
-
-2. **Read all existing skills** from `~/.claude/skills/*/SKILL.md`
-   - Catalog each skill's purpose, triggers, and workflow
-   - Note gaps between what skills offer and what sessions reveal
-
-3. **Read system CLAUDE.md** from `~/.claude/CLAUDE.md`
-   - Review global rules, conventions, and environment settings
-   - Check if session learnings reveal missing rules, outdated conventions, or new patterns worth codifying
-
-4. **Analyze the current session** for:
+1. **Analyze the current session** for:
    - Workarounds or manual steps that could be automated
    - Repeated prompt patterns that suggest a missing skill
    - Corrections or refinements to skill outputs
    - New tools or APIs discovered during the session
+   - Errors encountered and how they were resolved
+   - Patterns that should become conventions
+
+2. **Read all existing skills** from `~/.claude/skills/*/SKILL.md`
+   - Catalog each skill's purpose, triggers, and workflow
+   - Compare against what this session revealed
+
+3. **Read system CLAUDE.md** from `~/.claude/CLAUDE.md`
+   - Review global rules, conventions, and environment settings
+   - Check if session learnings reveal missing rules, outdated conventions, or new patterns worth codifying
 
 ### Phase 2: Identify Opportunities
 

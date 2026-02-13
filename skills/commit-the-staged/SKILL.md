@@ -31,9 +31,14 @@ Generate a commit message based on the staged changes following the project's co
 - **security**: Security-related changes
 
 ### Step 4: Execute Commit
-Run the commit command:
+Run the commit using HEREDOC format to ensure proper formatting:
 ```bash
-git commit -m "<generated_message>"
+git commit -m "$(cat <<'EOF'
+<generated_message>
+
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+EOF
+)"
 ```
 
 ### Step 5: Verify and Report

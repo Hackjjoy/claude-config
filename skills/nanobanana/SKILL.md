@@ -1,6 +1,6 @@
 ---
 name: nanobanana
-description: Generate game asset images with transparent backgrounds using Gemini API. Use when creating sprites, icons, items, characters for games. Triggers on requests like "generate game asset", "create sprite", "make game icon".
+description: Generate game asset images with transparent backgrounds using Gemini API. Use when creating sprites, icons, items, characters, textures for games. Triggers on "generate game asset", "create sprite", "make game icon", "generate 2D art", "create game image", "make character sprite", "generate texture sprite".
 ---
 
 # Nanobanana - Game Asset Image Generator

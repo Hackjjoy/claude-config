@@ -45,6 +45,21 @@ python scripts/init_skill.py <skill-name> --path <output-directory>
 
 Creates template directory with SKILL.md and example resources.
 
+### 1.5. Clean Up Template Files
+
+After initialization, remove unused template files based on your resource plan:
+
+```bash
+# Remove unused directories and their placeholder files
+rm -f <skill-path>/scripts/example.py
+rm -f <skill-path>/references/reference.md
+rm -f <skill-path>/assets/.gitkeep
+# Remove empty directories you won't use
+rmdir <skill-path>/scripts/ <skill-path>/references/ <skill-path>/assets/ 2>/dev/null
+```
+
+Keep only the directories you plan to use (see Step 2).
+
 ### 2. Plan Resources
 
 Analyze use cases to determine needed resources:

@@ -17,4 +17,10 @@ stats-cache.json
 .credentials.json
 history.jsonl
 
+.session-stats.json
+mcp-needs-auth-cache.json
+
 node_modules/
+session-env/
+backups/
+sessions/

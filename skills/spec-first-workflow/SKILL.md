@@ -1,6 +1,6 @@
 ---
 name: spec-first-workflow
-description: Use BEFORE non-trivial feature work (new features, components, refactors spanning 3+ files). Brainstorms requirements, writes a committed spec to docs/specs/YYYY-MM-DD-<topic>.md, then hands off to Plan Mode + TodoWrite. Does NOT create plan files — specs are committed, plans are session-scoped. Trigger on "let's build X", "implement Y", "refactor Z", or when the user describes a feature idea before asking for code.
+description: Use BEFORE non-trivial feature work (new features, components, refactors spanning 3+ files). Brainstorms requirements, writes a committed spec to docs/specs/YYYY-MM-DD-<topic>.md, then hands off to Plan Mode + TodoWrite. Does NOT create plan files — specs are committed, plans are session-scoped. After the feature ships and is verified, graduate the spec: merge operational content into a living runbook at docs/<topic>.md, update references, and delete the spec file (no stub left behind — git history is the recovery path). Trigger on "let's build X", "implement Y", "refactor Z", or when the user describes a feature idea before asking for code. Also trigger when a shipped feature's spec still lives in docs/specs/ and the user asks about cleanup, consolidation, or runbook creation.
 ---
 
 # Spec-First Workflow
@@ -11,7 +11,9 @@ A lightweight spec-driven approach for team codebases: commit the "what and why"
 
 **Commit specs, not plans.** Specs describe intent and remain useful for months. Plans describe execution sequence and go stale the moment they're merged — they duplicate what the code itself shows. Claude Code's native Plan Mode and TodoWrite already handle per-session execution; duplicating that in files adds maintenance cost without clear payoff for small-to-medium teams.
 
-This skill is deliberately narrower than Superpowers-style workflows. It does one thing: get a good spec committed before code starts.
+**Graduate specs when features ship.** Specs are durable during design but their "what and why" framing decays as living documentation once the feature is running. When the feature is verified end-to-end, merge the spec's operational content into a runbook at `docs/<topic>.md` — operational facts stay current, design rationale is preserved as an appendix citing the original commit SHA, and the spec file is deleted outright (git history is the recovery path; `docs/specs/` should only hold active specs). The failure mode to avoid: two docs describing the same system, drifting apart silently. See Step 7.
+
+This skill is deliberately narrower than Superpowers-style workflows. It does two things: get a good spec committed before code starts, and retire that spec into a runbook once the feature ships.
 
 ## When to invoke
 
@@ -125,7 +127,41 @@ After the spec is committed:
 - Ask the user to `Shift+Tab` into Plan Mode when they're ready to implement. Claude Code's Plan Mode is a user-controlled UI mode — Claude cannot enter it on the user's behalf; it can only suggest the toggle.
 - Use TodoWrite to track tasks during execution. Reference the spec when useful: TodoWrite items can say things like "Implement §Design.AuthFlow step 2 (see spec)".
 
-The spec is the durable artifact. The plan is ephemeral — it lives in the session and dies with it, by design.
+The spec is the durable artifact during implementation. The plan is ephemeral — it lives in the session and dies with it, by design. Once the feature ships, graduate the spec (Step 7).
+
+### Step 7 — Graduate the spec (when the feature ships)
+
+Specs are durable during design but decay as living documentation after ship. When the feature is verified end-to-end, **graduate** the spec: merge its operational content into a runbook, update any references pointing at the spec path, and **delete the spec file** (`git rm`). This is ideally part of the PR that closes out the feature, not a separate follow-up task that can get lost.
+
+**Trigger.** Spec graduates when the feature has been exercised end-to-end successfully at least once in its real environment — first green CI run, first production request, first user walkthrough, etc. The exact signal depends on the feature; pick it when writing the spec if possible, so graduation has a defined finish line.
+
+If any open questions remain unresolved, the feature isn't done. Close them (or explicitly mark "defer to v2") before graduating.
+
+**What moves where:**
+
+- **Operational facts** (files, resources, secrets, commands, configuration, endpoints) → runbook body at `docs/<topic>.md`. Living source of truth going forward.
+- **Design rationale** (Alternatives considered, Goals, Non-goals) → runbook appendix, typically titled "Design decisions" or "Background". Irreplaceable historical content that the runbook body doesn't need but future readers will. Cite the original spec's commit SHA in the appendix — that's the recovery path for anyone who wants the full historical spec (`git show <sha>:docs/specs/<file>.md`).
+- **Context** (the world before the feature existed) → usually drop. The runbook describes the world as it is, not as it was.
+- **Implementation notes** → split by purpose. Ongoing operational caveats move to the runbook body; one-time ordering constraints that are now irrelevant get dropped.
+- **Open questions** → all must be resolved (or deferred to a named follow-up) before graduation.
+
+**Delete, don't stub.** After the rationale has moved into the runbook's appendix (with the commit SHA cited for recovery), `git rm` the spec file. Do not leave a one-line stub behind. Git history preserves the original; `docs/specs/` should only contain active specs, not tombstones, so the directory listing stays an honest signal of "what's in flight".
+
+**Update references BEFORE deleting.** Any file in the repo that points at the old spec path will break once the spec is deleted. Grep the repo first and redirect every hit to the runbook:
+
+```bash
+grep -rn "docs/specs/<spec-filename>" .
+```
+
+Typical hits: error messages in scripts, code comments, CI templates, other specs. Every one of these needs to point at `docs/<topic>.md` before the `git rm` lands in the same commit.
+
+**When NOT to graduate:**
+
+- **Pure refactors or internal changes with no user/operator surface** — no runbook to graduate into. Leave the spec frozen in `docs/specs/`.
+- **Spec superseded by a newer spec** — if the superseded spec was never implemented, `git rm` it; if partially implemented, add `## Status: Superseded by <path>` at the top and leave it frozen. The newer spec is the live design record either way.
+- **Feature shipped but not yet verified** in its real environment — wait. Graduating too early freezes a design that might still need revision.
+
+**Graduation commit.** Bundle the runbook changes, the reference updates, and the spec deletion into one commit: `docs: graduate <topic> spec to runbook`. Keeping it a single commit means the graduation is atomic and trivial to revert if something downstream breaks.
 
 ## Exceptions
 
@@ -149,8 +185,9 @@ If the user overrides and asks for a committed plan file, honor it. But note the
 - Does not create git worktrees — the user's git workflow is up to them
 - Does not replace Plan Mode — it feeds INTO Plan Mode
 - Does not generate code — it stops at "spec committed, ready to implement"
+- Does not force graduation for every spec — pure refactors or superseded specs stay frozen in `docs/specs/`
 
-The only output of this skill is a committed spec file at `docs/specs/YYYY-MM-DD-<topic>.md`, followed by a clear handoff signal.
+The outputs of this skill are (1) a committed spec file at `docs/specs/YYYY-MM-DD-<topic>.md` before implementation starts, and (2) graduation of that spec into a runbook at `docs/<topic>.md` once the feature ships and is verified.
 
 ## Reference example
 
@@ -191,7 +228,7 @@ this as replay-risk. Ticket SEC-214.
 - Grace window for legacy mobile clients still on 30d tokens? (defer to v2)
 ```
 
-## Completion checklist
+## Completion checklist — spec phase
 
 Before declaring the spec phase done, verify all of:
 
@@ -204,3 +241,18 @@ Before declaring the spec phase done, verify all of:
 - [ ] User told "ready to implement — Shift+Tab into Plan Mode when you want to start" (or implementation has been explicitly deferred)
 
 If any box is unchecked, the workflow is not complete.
+
+## Completion checklist — graduation phase
+
+Once the feature ships, before declaring the spec graduated:
+
+- [ ] Feature verified end-to-end in its real environment (cite the verification — e.g., CI run URL, first production event, user confirmation)
+- [ ] All open questions resolved or moved to a named follow-up spec
+- [ ] Runbook at `docs/<topic>.md` contains all operational content (secrets, setup, commands, troubleshooting)
+- [ ] Design rationale (Alternatives considered, Goals, Non-goals) preserved as an appendix in the runbook
+- [ ] Runbook appendix cites the original spec's commit SHA so the full historical spec is recoverable via `git show <sha>:docs/specs/<filename>`
+- [ ] References to the spec path updated across the codebase — verified with `grep -rn "docs/specs/<filename>"` returning no hits outside the spec itself
+- [ ] Spec file deleted with `git rm` (no stub left behind)
+- [ ] Graduation commit created with message `docs: graduate <topic> spec to runbook`
+
+Skip this section entirely if the spec is not graduation-eligible (pure refactor with no operator surface, or superseded by a newer spec — in which case mark the spec's status and leave it).

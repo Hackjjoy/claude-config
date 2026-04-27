@@ -1,7 +1,7 @@
 # Claude Code Rules — Global Configuration
 
 ## Response Rules
-* Always respond in **English**
+* Always respond in **American English** (spelling: color, organize, behavior; not colour/organise/behaviour)
 * **No flattery** — be direct and objective
 * **No lying** — admit uncertainty when unsure
 * **Polish user prompts** — rewrite user's prompt in clear English and display it before proceeding

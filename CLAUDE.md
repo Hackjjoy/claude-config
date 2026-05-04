@@ -45,12 +45,7 @@ Add JSDoc comments for public functions with params, returns, and throws.
 * Link to related issues
 * If AI-generated, note: "AI-assisted, reviewed & adjusted"
 
-## GCP Infrastructure
-
-* Project: `game-server-427808`
-* Cloud Run region: `us-central1`
-* Artifact Registry repo: `cloud-run-source-deploy` (us-central1)
-* WIF Pool for stellarlabsai repos: `github-actions-pool` (provider: `github-provider`)
-* GitHub Actions SA: `github-actions-gcs-uploader@game-server-427808.iam.gserviceaccount.com`
-* Cloud Run runtime SA: `83132866129-compute@developer.gserviceaccount.com`
-* gcr.io is backed by Artifact Registry — same permissions apply
+## Cloud Infrastructure
+Cloud provider differs per project — see project-level `CLAUDE.md`:
+* Stellar (`~/Works/Stellar`) — GCP
+* Stratosphere — Azure

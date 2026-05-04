@@ -7,12 +7,7 @@
       "Bash(bash)",
       "Bash(export PATH=\"$HOME/.bun/bin:$PATH\")",
       "Bash(bunx oh-my-opencode install:*)",
-      "Bash(code:*)",
-      "Bash(dpkg:*)",
-      "Bash(snap list:*)",
-      "Bash(sudo apt update:*)",
-      "Bash(sudo apt upgrade:*)",
-      "Bash(apt list:*)"
+      "Bash(code:*)"
     ]
   }
 }

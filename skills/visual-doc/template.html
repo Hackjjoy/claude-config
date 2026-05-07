@@ -1,0 +1,1857 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AoS Tool Repository — Workflows</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Anthropic-inspired warm palette */
+    --bg: #FAF9F5;
+    --bg-2: #F3EEE3;
+    --surface: #FFFFFF;
+    --ink: #1F1B16;
+    --ink-2: #3D372F;
+    --ink-dim: #6E665B;
+    --ink-mute: #9A9286;
+    --line: #E5DCC9;
+    --line-2: #D9CDB6;
+
+    --clay: #D97757;          /* Claude clay / coral */
+    --clay-deep: #B85A3D;
+    --clay-soft: #F4D9CB;
+    --clay-tint: #FBEDE3;
+
+    --sage: #6B8E6F;          /* developer accent */
+    --sage-soft: #D9E4D9;
+    --sage-tint: #ECF2EC;
+
+    --amber: #C68B3A;         /* backend accent */
+    --amber-soft: #F0DEBC;
+    --amber-tint: #F7EBD2;
+
+    --cream-deep: #EDE4D2;
+
+    --code-bg: #F5EFE0;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 56px 36px 120px; }
+
+  /* Decorative texture: subtle grain */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(circle at 12% 18%, rgba(217,119,87,.06), transparent 38%),
+      radial-gradient(circle at 88% 70%, rgba(107,142,111,.05), transparent 42%);
+    z-index: 0;
+  }
+  .wrap { position: relative; z-index: 1; }
+
+  /* Type */
+  .serif { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; font-feature-settings: "ss01" on, "ss02" on; }
+  h1, h2, h3, .serif-h {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  code, pre, .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+  .eyebrow {
+    color: var(--clay-deep);
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 22px;
+    height: 1.5px;
+    background: var(--clay);
+    display: inline-block;
+  }
+
+  /* Hero */
+  header.hero {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 48px;
+    margin-bottom: 56px;
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .hero-text h1 {
+    font-size: 52px;
+    line-height: 1.05;
+    margin: 0 0 18px;
+    font-weight: 500;
+  }
+  .hero-text h1 em {
+    font-style: italic;
+    color: var(--clay-deep);
+    font-weight: 400;
+  }
+  .lede {
+    color: var(--ink-2);
+    font-size: 17px;
+    max-width: 560px;
+    margin: 0 0 14px;
+  }
+  .lede strong { color: var(--ink); font-weight: 600; }
+  .scale-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--ink-mute);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 6px 14px;
+    margin-bottom: 4px;
+  }
+  .scale-stat::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--clay);
+    flex-shrink: 0;
+  }
+  .hero-art { display: flex; justify-content: center; }
+  .hero-art svg { width: 100%; max-width: 460px; height: auto; }
+
+  /* Roles */
+  .roles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 44px;
+  }
+  .role {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px 24px;
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 18px;
+    align-items: center;
+  }
+  .role.d { border-top: 3px solid var(--sage); }
+  .role.b { border-top: 3px solid var(--amber); }
+  .role .ico {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .role.d .ico { background: var(--sage-tint); }
+  .role.b .ico { background: var(--amber-tint); }
+  .role h3 { margin: 0 0 2px; font-size: 18px; font-weight: 600; }
+  .role p { margin: 0; color: var(--ink-dim); font-size: 14px; }
+  .role .pill-letter {
+    display: inline-block;
+    background: var(--clay);
+    color: white;
+    padding: 1px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .role.d .pill-letter { background: var(--sage); }
+  .role.b .pill-letter { background: var(--amber); }
+
+  /* Sections */
+  section { margin-top: 80px; }
+  h2 {
+    font-size: 32px;
+    margin: 0 0 8px;
+    line-height: 1.2;
+  }
+  h2 .num {
+    display: inline-block;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--clay);
+    font-size: 22px;
+    margin-right: 14px;
+    vertical-align: 6px;
+  }
+  h2 .tag {
+    display: inline-block;
+    margin-left: 14px;
+    padding: 4px 12px;
+    background: var(--clay-tint);
+    color: var(--clay-deep);
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    vertical-align: 8px;
+  }
+  .sub { color: var(--ink-dim); margin: 8px 0 28px; max-width: 760px; font-size: 15.5px; }
+
+  /* Repo layout */
+  .repo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px 26px;
+  }
+  .card h4 {
+    margin: 0 0 6px;
+    font-family: 'Fraunces', serif;
+    font-size: 19px;
+    font-weight: 500;
+  }
+  .card .muted { color: var(--ink-mute); font-size: 13px; margin: 0 0 14px; }
+  pre.tree {
+    font-size: 13px;
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 0;
+    color: var(--ink-2);
+    overflow-x: auto;
+    line-height: 1.7;
+  }
+  pre.tree .hl { color: var(--ink); font-weight: 500; }
+  pre.tree .accent-clay { color: var(--clay-deep); font-weight: 500; }
+  pre.tree .accent-sage { color: #4F6F53; font-weight: 500; }
+  pre.tree .accent-amber { color: #9F6E2C; font-weight: 500; }
+  pre.tree .com { color: var(--ink-mute); font-style: italic; }
+
+  /* Kickoff inline note */
+  .brief-grid {
+    margin-top: 10px;
+    background: var(--cream-deep);
+    border-left: 3px solid var(--clay);
+    border-radius: 6px;
+    padding: 10px 14px;
+  }
+  .brief-grid > div {
+    font-size: 12.5px;
+    color: var(--ink-2);
+    line-height: 1.55;
+  }
+  .brief-grid > div strong {
+    color: var(--clay-deep);
+    font-weight: 600;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .brief-grid code {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 11.5px;
+  }
+
+  /* Requirements */
+  .reqs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .req {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px 22px;
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  .req-ico {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: var(--clay-tint);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .req-name {
+    font-weight: 600;
+    font-size: 14.5px;
+    color: var(--ink);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .req-meta {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--ink-mute);
+    background: var(--code-bg);
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+  .req-desc {
+    color: var(--ink-dim);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .req-desc code {
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 12px;
+  }
+  .req-tags {
+    margin-top: 10px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* Tech stack */
+  .stack {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .tech {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px 20px;
+    text-align: center;
+  }
+  .tech .ico {
+    width: 56px; height: 56px;
+    margin: 0 auto 12px;
+    background: var(--clay-tint);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tech .name { font-weight: 600; font-size: 14px; color: var(--ink); }
+  .tech .desc { color: var(--ink-mute); font-size: 12.5px; margin-top: 4px; }
+
+  /* Access model */
+  .access-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .access-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px 24px;
+  }
+  .access-card.deploy { border-top: 3px solid var(--clay); }
+  .access-card.content { border-top: 3px solid var(--sage); }
+  .access-card.view { border-top: 3px solid var(--amber); }
+  .access-card .ac-icon {
+    width: 40px; height: 40px;
+    border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 12px;
+  }
+  .access-card.deploy .ac-icon { background: var(--clay-tint); }
+  .access-card.content .ac-icon { background: var(--sage-tint); }
+  .access-card.view .ac-icon { background: var(--amber-tint); }
+  .access-card h4 {
+    margin: 0 0 4px;
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .access-card .ac-who {
+    font-size: 11px;
+    color: var(--ink-mute);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 600;
+  }
+  .access-card.deploy .ac-who { color: var(--clay-deep); }
+  .access-card.content .ac-who { color: var(--sage); }
+  .access-card.view .ac-who { color: var(--amber); }
+  .access-card p {
+    margin: 0;
+    color: var(--ink-dim);
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .access-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  .access-table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .access-table-wrap table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  .access-table-wrap thead th {
+    background: var(--bg-2);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid var(--line);
+  }
+  .access-table-wrap thead th:first-child {
+    font-family: 'Fraunces', serif;
+    font-size: 13px;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .access-table-wrap tbody tr:not(:last-child) td {
+    border-bottom: 1px solid var(--line);
+  }
+  .access-table-wrap tbody td {
+    padding: 11px 16px;
+    color: var(--ink-2);
+  }
+  .access-table-wrap tbody td:first-child {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .access-table-wrap tbody td .check {
+    color: var(--sage);
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .access-table-wrap tbody td .dash {
+    color: var(--ink-mute);
+    font-size: 16px;
+  }
+  .auth-note {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px 24px;
+  }
+  .auth-note h4 {
+    margin: 0 0 8px;
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .auth-note p {
+    margin: 0 0 14px;
+    color: var(--ink-dim);
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .auth-note p:last-child { margin-bottom: 0; }
+  .auth-note .kv {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .auth-note .kv-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+  }
+  .auth-note .kv-row .kv-label {
+    font-weight: 600;
+    color: var(--ink);
+    min-width: 70px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .auth-note .kv-row .kv-val {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 2px 8px;
+    color: var(--ink-2);
+  }
+
+  /* Ownership boundary */
+  .boundary {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 36px 40px;
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr;
+    gap: 0;
+    align-items: stretch;
+  }
+  .zone h4 {
+    margin: 0 0 4px;
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 500;
+  }
+  .zone .who-line {
+    font-size: 11px;
+    color: var(--ink-mute);
+    margin-bottom: 16px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .zone.d .who-line { color: var(--sage); }
+  .zone.b .who-line { color: var(--amber); }
+  .zone ul {
+    margin: 0; padding-left: 20px;
+    color: var(--ink-2);
+    font-size: 14px;
+  }
+  .zone ul li { margin-bottom: 6px; }
+  .zone-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 14px;
+  }
+  .zone.d .zone-icon { background: var(--sage-tint); }
+  .zone.b .zone-icon { background: var(--amber-tint); }
+  .boundary .arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Scenarios overview */
+  .overview {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .overview-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px 24px;
+    position: relative;
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  .overview-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--line-2);
+  }
+  .overview-card .ov-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 36px;
+    color: var(--clay);
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  .overview-card .ov-title {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .overview-card .ov-desc {
+    color: var(--ink-dim);
+    font-size: 13px;
+    line-height: 1.55;
+    margin-bottom: 12px;
+  }
+  .overview-card .ov-desc code {
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 12px;
+    color: var(--ink);
+  }
+  .overview-card .ov-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* Scenarios */
+  .scenario {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 36px 40px;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 44px;
+    align-items: start;
+  }
+  .scenario .illus {
+    position: sticky;
+    top: 24px;
+  }
+  .scenario .illus svg {
+    width: 100%;
+    height: auto;
+  }
+  .scenario .illus .caption {
+    margin-top: 12px;
+    text-align: center;
+    color: var(--ink-mute);
+    font-size: 12.5px;
+    font-style: italic;
+    font-family: 'Fraunces', serif;
+  }
+
+  /* Flow steps */
+  .flow { display: grid; gap: 14px; }
+  .step {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 18px;
+    align-items: stretch;
+  }
+  .step .gutter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .step .pill {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 14px;
+    background: var(--surface);
+    border: 1.5px solid var(--line-2);
+    color: var(--ink-2);
+    flex-shrink: 0;
+    font-family: 'Fraunces', serif;
+  }
+  .step .pill.d { border-color: var(--sage); color: var(--sage); background: var(--sage-tint); }
+  .step .pill.b { border-color: var(--amber); color: var(--amber); background: var(--amber-tint); }
+  .step .pill.s { border-color: var(--clay); color: var(--clay-deep); background: var(--clay-tint); }
+  .step .line {
+    width: 2px; flex: 1;
+    background: var(--line);
+    margin-top: 6px;
+  }
+  .step:last-child .line { display: none; }
+  .step .body {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 4px;
+  }
+  .step .body .title {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .who {
+    font-size: 10.5px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+  .who.d { background: var(--sage-tint); color: var(--sage); border: 1px solid var(--sage-soft); }
+  .who.b { background: var(--amber-tint); color: var(--amber); border: 1px solid var(--amber-soft); }
+  .who.s { background: var(--clay-tint); color: var(--clay-deep); border: 1px solid var(--clay-soft); }
+  .step .body p { margin: 0; color: var(--ink-dim); font-size: 14px; }
+  .step .body code, .step .body .cmd {
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 12.5px;
+    color: var(--ink);
+  }
+  .step .artifacts {
+    margin-top: 10px;
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .chip {
+    font-size: 11.5px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  .chip.warn { color: var(--clay-deep); border-color: var(--clay-soft); background: var(--clay-tint); }
+  .chip.ok { color: #4F6F53; border-color: var(--sage-soft); background: var(--sage-tint); }
+
+  /* Guardrails */
+  .rails {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .rail {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px 22px;
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  .rail .rico {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: var(--clay-tint);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .rail.sage .rico { background: var(--sage-tint); }
+  .rail.amber .rico { background: var(--amber-tint); }
+  .rail .name {
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-size: 14.5px;
+    color: var(--ink);
+  }
+  .rail .desc { color: var(--ink-dim); font-size: 13px; line-height: 1.55; }
+
+  footer {
+    margin-top: 80px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-mute);
+    font-size: 12.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  footer .signature {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--clay-deep);
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 13.5px;
+  }
+
+  @media (max-width: 920px) {
+    header.hero { grid-template-columns: 1fr; }
+    .hero-text h1 { font-size: 38px; }
+    .roles, .repo { grid-template-columns: 1fr; }
+    .boundary { grid-template-columns: 1fr; padding: 28px; }
+    .boundary .arrow { transform: rotate(90deg); padding: 12px 0; }
+    .scenario { grid-template-columns: 1fr; gap: 28px; padding: 28px; }
+    .scenario .illus { position: static; max-width: 280px; margin: 0 auto; }
+    .stack { grid-template-columns: repeat(2, 1fr); }
+    .rails { grid-template-columns: 1fr; }
+    .reqs { grid-template-columns: 1fr; }
+    .overview { grid-template-columns: 1fr; }
+    .access-grid { grid-template-columns: 1fr; }
+    .access-meta { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ========== HERO ========== -->
+  <header class="hero">
+    <div class="hero-text">
+      <div class="eyebrow">AoS Internal Platform</div>
+      <h1>An <em>enterprise tool</em><br>repository, with rails.</h1>
+      <p class="lede">
+        A monorepo of internal web apps deployed to Cloudflare. Developers ship the app;
+        the backend team owns deployment, KV configuration, and the harness guardrails
+        that keep every tool predictable. <strong>design-review-tool</strong> is the reference example.
+      </p>
+      <div class="scale-stat">Designed for 5–10 tools &amp; ~30 team members</div>
+
+      <div class="roles">
+        <div class="role d">
+          <div class="ico">
+            <!-- Developer icon: laptop with code brackets -->
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#4F6F53" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="7" width="24" height="16" rx="2"/>
+              <path d="M2 26h28"/>
+              <path d="M12 13l-3 3 3 3"/>
+              <path d="M20 13l3 3-3 3"/>
+              <circle cx="22" cy="4.5" r="1.8" fill="#D97757" stroke="none"/>
+            </svg>
+          </div>
+          <div>
+            <h3>Developer</h3>
+            <p>Owns the app: UI, business logic, local testing. Brings or creates a web app, then iterates inside the repo.</p>
+          </div>
+        </div>
+        <div class="role b">
+          <div class="ico">
+            <!-- Backend icon: servers + gear -->
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#9F6E2C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="5" width="18" height="6" rx="1.5"/>
+              <rect x="5" y="14" width="18" height="6" rx="1.5"/>
+              <circle cx="9" cy="8" r="0.9" fill="#9F6E2C" stroke="none"/>
+              <circle cx="9" cy="17" r="0.9" fill="#9F6E2C" stroke="none"/>
+              <path d="M27 23v-2.5l1.5-.6-.6-1.5-1.5.4-1.4-1.4.4-1.5-1.5-.6-.6 1.5h-1.6l-.6-1.5-1.5.6.4 1.5-1.4 1.4-1.5-.4-.6 1.5 1.5.6V23"/>
+              <circle cx="24" cy="22" r="2" fill="#FBEDE3" stroke="#9F6E2C"/>
+            </svg>
+          </div>
+          <div>
+            <h3>Backend Team</h3>
+            <p>Owns the platform: Cloudflare deployment, KV namespaces, auth, asset routing, and the skills that enforce conventions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero illustration: repository as workshop with tools -->
+    <div class="hero-art">
+      <svg viewBox="0 0 460 380" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="dots" x="0" y="0" width="14" height="14" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1" fill="#E5DCC9"/>
+          </pattern>
+        </defs>
+
+        <!-- Soft warm cloud -->
+        <ellipse cx="230" cy="200" rx="200" ry="150" fill="#F4D9CB" opacity="0.35"/>
+        <ellipse cx="230" cy="200" rx="170" ry="125" fill="#FBEDE3" opacity="0.7"/>
+
+        <!-- Repository: a big folder/box -->
+        <g>
+          <!-- Folder back tab -->
+          <path d="M90 110 L 200 110 L 215 125 L 370 125 L 370 145 L 90 145 Z" fill="#D97757" stroke="#B85A3D" stroke-width="2" stroke-linejoin="round"/>
+          <!-- Folder body -->
+          <rect x="90" y="140" width="280" height="170" rx="8" fill="#FFFFFF" stroke="#1F1B16" stroke-width="2.2"/>
+          <!-- Folder body shadow -->
+          <rect x="90" y="140" width="280" height="170" rx="8" fill="url(#dots)" opacity="0.6"/>
+
+          <!-- Tools inside (3 small boxes) -->
+          <!-- Tool 1: design-review-tool -->
+          <g transform="translate(110, 165)">
+            <rect width="70" height="55" rx="6" fill="#6B8E6F" stroke="#1F1B16" stroke-width="1.8"/>
+            <rect x="8" y="10" width="54" height="6" rx="2" fill="#ECF2EC"/>
+            <rect x="8" y="22" width="38" height="4" rx="1.5" fill="#ECF2EC" opacity="0.7"/>
+            <rect x="8" y="30" width="44" height="4" rx="1.5" fill="#ECF2EC" opacity="0.5"/>
+            <circle cx="60" cy="44" r="4" fill="#FBEDE3"/>
+          </g>
+          <!-- Tool 2 -->
+          <g transform="translate(195, 165)">
+            <rect width="70" height="55" rx="6" fill="#FBEDE3" stroke="#1F1B16" stroke-width="1.8" stroke-dasharray="4 3"/>
+            <text x="35" y="34" text-anchor="middle" font-family="Fraunces, serif" font-size="22" fill="#B85A3D" font-style="italic">+</text>
+          </g>
+          <!-- Tool 3 -->
+          <g transform="translate(280, 165)">
+            <rect width="70" height="55" rx="6" fill="#C68B3A" stroke="#1F1B16" stroke-width="1.8"/>
+            <rect x="8" y="10" width="54" height="6" rx="2" fill="#F7EBD2"/>
+            <rect x="8" y="22" width="44" height="4" rx="1.5" fill="#F7EBD2" opacity="0.8"/>
+            <rect x="8" y="30" width="32" height="4" rx="1.5" fill="#F7EBD2" opacity="0.5"/>
+          </g>
+
+          <!-- Bottom row: connecting line to a "harness" gear -->
+          <path d="M230 245 L 230 265" stroke="#1F1B16" stroke-width="1.5" stroke-dasharray="3 3"/>
+
+          <!-- Harness gear -->
+          <g transform="translate(230, 285)">
+            <circle r="22" fill="#FAF9F5" stroke="#1F1B16" stroke-width="1.8"/>
+            <g stroke="#1F1B16" stroke-width="1.8" stroke-linecap="round">
+              <path d="M0 -28 L 0 -22"/>
+              <path d="M0 28 L 0 22"/>
+              <path d="M-28 0 L -22 0"/>
+              <path d="M28 0 L 22 0"/>
+              <path d="M-20 -20 L -16 -16"/>
+              <path d="M20 -20 L 16 -16"/>
+              <path d="M-20 20 L -16 16"/>
+              <path d="M20 20 L 16 16"/>
+            </g>
+            <circle r="8" fill="#D97757" stroke="#1F1B16" stroke-width="1.5"/>
+          </g>
+          <text x="230" y="338" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="12" fill="#6E665B">harness</text>
+
+          <!-- Folder label -->
+          <text x="105" y="132" font-family="Fraunces, serif" font-size="13" fill="#FFFFFF" font-weight="500">aos / tools</text>
+        </g>
+
+        <!-- D person on left -->
+        <g transform="translate(35, 220)">
+          <circle cx="20" cy="20" r="14" fill="#ECF2EC" stroke="#1F1B16" stroke-width="1.8"/>
+          <path d="M5 60 Q 5 38 20 38 Q 35 38 35 60" fill="#6B8E6F" stroke="#1F1B16" stroke-width="1.8"/>
+          <!-- Code brackets above head -->
+          <text x="20" y="6" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#4F6F53" font-weight="600">&lt;/&gt;</text>
+          <!-- Face -->
+          <circle cx="15" cy="19" r="1.2" fill="#1F1B16"/>
+          <circle cx="25" cy="19" r="1.2" fill="#1F1B16"/>
+          <path d="M15 25 Q 20 28 25 25" stroke="#1F1B16" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+          <text x="20" y="76" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="11" fill="#4F6F53">Developer</text>
+        </g>
+
+        <!-- B person on right -->
+        <g transform="translate(395, 220)">
+          <circle cx="20" cy="20" r="14" fill="#F7EBD2" stroke="#1F1B16" stroke-width="1.8"/>
+          <path d="M5 60 Q 5 38 20 38 Q 35 38 35 60" fill="#C68B3A" stroke="#1F1B16" stroke-width="1.8"/>
+          <!-- Wrench in hand -->
+          <g transform="translate(34, 42) rotate(35)">
+            <rect x="-1" y="-1" width="14" height="3" rx="1" fill="#9F6E2C" stroke="#1F1B16" stroke-width="1"/>
+            <circle cx="13" cy="0.5" r="2.5" fill="none" stroke="#1F1B16" stroke-width="1"/>
+          </g>
+          <circle cx="15" cy="19" r="1.2" fill="#1F1B16"/>
+          <circle cx="25" cy="19" r="1.2" fill="#1F1B16"/>
+          <path d="M15 25 Q 20 28 25 25" stroke="#1F1B16" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+          <text x="20" y="76" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="11" fill="#9F6E2C">Backend</text>
+        </g>
+
+        <!-- Decorative sparkle -->
+        <g transform="translate(380, 70)" stroke="#D97757" stroke-width="1.8" stroke-linecap="round" fill="none">
+          <path d="M0 -8 L 0 8"/>
+          <path d="M-8 0 L 8 0"/>
+          <path d="M-5 -5 L 5 5" opacity="0.6"/>
+          <path d="M5 -5 L -5 5" opacity="0.6"/>
+        </g>
+        <g transform="translate(70, 80)" stroke="#6B8E6F" stroke-width="1.5" stroke-linecap="round" fill="none">
+          <path d="M0 -5 L 0 5"/>
+          <path d="M-5 0 L 5 0"/>
+        </g>
+      </svg>
+    </div>
+  </header>
+
+  <!-- ========== REQUIREMENTS ========== -->
+  <section>
+    <h2>Requirements</h2>
+    <p class="sub">What you need installed and provisioned before any of the workflows below will run. Items tagged <span class="who d" style="vertical-align:1px">Developer</span> apply to the app author; <span class="who b" style="vertical-align:1px">Backend</span> items are platform setup; unmarked are needed by everyone.</p>
+
+    <div class="reqs">
+      <div class="req">
+        <div class="req-ico">
+          <!-- Git -->
+          <svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="#B85A3D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="16" r="3" fill="#FBEDE3"/>
+            <circle cx="22" cy="9" r="3" fill="#FBEDE3"/>
+            <circle cx="22" cy="23" r="3" fill="#FBEDE3"/>
+            <path d="M11 16 L 19 9"/>
+            <path d="M11 16 L 19 23"/>
+          </svg>
+        </div>
+        <div class="req-body">
+          <div class="req-name">Git <span class="req-meta">2.30+</span></div>
+          <div class="req-desc">Clone, branch, PR. The repo's source of truth lives on GitHub.</div>
+          <div class="req-tags"><span class="who d">Developer</span><span class="who b">Backend</span></div>
+        </div>
+      </div>
+
+      <div class="req">
+        <div class="req-ico">
+          <!-- Claude Code / sparkle -->
+          <svg width="26" height="26" viewBox="0 0 32 32" fill="#FBEDE3" stroke="#B85A3D" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M16 3 L 19 12 L 28 15 L 19 18 L 16 27 L 13 18 L 4 15 L 13 12 Z"/>
+          </svg>
+        </div>
+        <div class="req-body">
+          <div class="req-name">Claude Code <span class="req-meta">latest</span></div>
+          <div class="req-desc">Required to invoke <code>/create_tool</code> and <code>/migrate_tool</code> skills. Skills live under <code>.claude/skills/</code>.</div>
+          <div class="req-tags"><span class="who d">Developer</span><span class="who b">Backend</span></div>
+        </div>
+      </div>
+
+      <div class="req">
+        <div class="req-ico">
+          <!-- Node.js hexagon -->
+          <svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="#B85A3D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 3 L 27 9 L 27 23 L 16 29 L 5 23 L 5 9 Z" fill="#FBEDE3"/>
+            <path d="M16 11 V 21" />
+            <path d="M16 21 Q 19 21 19 18 V 13" />
+          </svg>
+        </div>
+        <div class="req-body">
+          <div class="req-name">Node.js <span class="req-meta">≥ 20 LTS</span></div>
+          <div class="req-desc">Runtime for <code>wrangler</code> and any local dev tooling each tool brings.</div>
+          <div class="req-tags"><span class="who d">Developer</span><span class="who b">Backend</span></div>
+        </div>
+      </div>
+
+      <div class="req">
+        <div class="req-ico">
+          <!-- Wrangler / wrench -->
+          <svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="#9F6E2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 4 a6 6 0 0 0 -6 9.4 L 4 24.5 L 7.5 28 L 18.6 17 A 6 6 0 0 0 28 11 L 24 14 L 22 12 L 22 9 L 25 7 Z" fill="#F7EBD2"/>
+          </svg>
+        </div>
+        <div class="req-body">
+          <div class="req-name">Wrangler CLI <span class="req-meta">^4</span></div>
+          <div class="req-desc">Cloudflare deploy tool. Installed per-tool via <code>npm i</code>; <code>wrangler login</code> required once.</div>
+          <div class="req-tags"><span class="who b">Backend</span></div>
+        </div>
+      </div>
+
+      <div class="req">
+        <div class="req-ico">
+          <!-- Cloudflare cloud -->
+          <svg width="26" height="26" viewBox="0 0 32 32" fill="#F7EBD2" stroke="#9F6E2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 22 h 14 a 5 5 0 0 0 .5 -9.96 A 7 7 0 0 0 10 12.5 A 5 5 0 0 0 9 22 z"/>
+          </svg>
+        </div>
+        <div class="req-body">
+          <div class="req-name">Cloudflare account access</div>
+          <div class="req-desc">Workers Paid plan or trial; permission to create KV namespaces and deploy Workers under the AoS account.</div>
+          <div class="req-tags"><span class="who b">Backend</span></div>
+        </div>
+      </div>
+
+      <div class="req">
+        <div class="req-ico">
+          <!-- GitHub -->
+          <svg width="26" height="26" viewBox="0 0 32 32" fill="#FBEDE3" stroke="#B85A3D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="16" cy="16" r="12"/>
+            <path d="M11 25 v -3 c -3 1 -4 -2 -5 -3 m 14 6 v -4 c 0 -1.4 -.5 -2 -1 -2.5 c 3 -.4 5 -2 5 -5 c 0 -1.5 -.5 -2.5 -1 -3.5 c .2 -1 .2 -2 -.2 -3 c 0 0 -1 -.2 -3 1.2 c -2 -.5 -4 -.5 -6 0 c -2 -1.4 -3 -1.2 -3 -1.2 c -.4 1 -.4 2 -.2 3 c -.5 1 -1 2 -1 3.5 c 0 3 2 4.6 5 5 c -.5 .5 -.8 1.1 -1 2.5 v 4"/>
+          </svg>
+        </div>
+        <div class="req-body">
+          <div class="req-name">GitHub repo access</div>
+          <div class="req-desc">Read for everyone; write + Actions admin for Backend to manage CI gates.</div>
+          <div class="req-tags"><span class="who d">Developer</span><span class="who b">Backend</span></div>
+        </div>
+      </div>
+
+      <div class="req">
+        <div class="req-ico" style="background: var(--sage-tint);">
+          <!-- Person / account icon -->
+          <svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="#4F6F53" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="16" cy="11" r="5" fill="#ECF2EC"/>
+            <path d="M6 28 c 0 -6 4 -10 10 -10 s 10 4 10 10"/>
+          </svg>
+        </div>
+        <div class="req-body">
+          <div class="req-name">AoS Platform account</div>
+          <div class="req-desc">Email + password credentials provisioned by the Backend team. No SSO required. Grants access to the tools your role is assigned to.</div>
+          <div class="req-tags"><span class="who d">Developer</span><span class="who b">Backend</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== REPO LAYOUT ========== -->
+  <section>
+    <h2>Repository shape</h2>
+    <p class="sub">Each tool lives in its own top-level folder following the same Cloudflare Worker layout. The repo provides the harness; tool folders stay self-contained.</p>
+
+    <div class="repo">
+      <div class="card">
+        <h4>Reference: <code>design-review-tool/</code></h4>
+        <p class="muted">Cloudflare Worker + static assets + KV-backed state.</p>
+<pre class="tree">design-review-tool/
+├─ <span class="accent-amber hl">wrangler.toml</span>     <span class="com"># account, KV bindings, assets</span>
+├─ <span class="accent-amber hl">package.json</span>      <span class="com"># wrangler dev / deploy</span>
+├─ src/
+│  └─ <span class="accent-sage hl">worker.js</span>      <span class="com"># auth + API + routing</span>
+├─ public/             <span class="com"># static, served by ASSETS</span>
+│  ├─ index.html
+│  └─ Screens/
+└─ README.md</pre>
+      </div>
+
+      <div class="card">
+        <h4>Repository root</h4>
+        <p class="muted">Shared harness, skills, and CI live here.</p>
+<pre class="tree">aos-design-review-tool/
+├─ <span class="accent-sage hl">design-review-tool/</span>   <span class="com"># tool 1 (example)</span>
+├─ <span class="hl">&lt;next-tool&gt;/</span>          <span class="com"># one folder per tool</span>
+├─ .github/workflows/    <span class="com"># CI / deploy gates</span>
+├─ .claude/
+│  ├─ skills/            <span class="com"># /create_tool, /migrate_tool</span>
+│  └─ settings.json      <span class="com"># permissions, hooks</span>
+└─ CLAUDE.md             <span class="com"># repo-wide conventions</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== TECH STACK ========== -->
+  <section>
+    <h2>Tech stack <span class="tag">enforced by harness</span></h2>
+    <p class="sub">Every tool ships on the same primitives. New tools that diverge get caught at the migration step.</p>
+    <div class="stack">
+      <div class="tech">
+        <div class="ico">
+          <!-- Cloudflare cloud -->
+          <svg width="30" height="30" viewBox="0 0 32 32" fill="none" stroke="#B85A3D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 22h14a5 5 0 0 0 .5-9.96A7 7 0 0 0 10 12.5 5 5 0 0 0 9 22z" fill="#FBEDE3"/>
+          </svg>
+        </div>
+        <div class="name">Cloudflare Workers</div>
+        <div class="desc">Single <code>worker.js</code> entry, fetch handler.</div>
+      </div>
+      <div class="tech">
+        <div class="ico">
+          <!-- Lightning bolt for assets/edge -->
+          <svg width="30" height="30" viewBox="0 0 32 32" fill="#FBEDE3" stroke="#B85A3D" stroke-width="1.8" stroke-linejoin="round">
+            <path d="M17 3 L 7 18 L 14 18 L 12 29 L 24 13 L 16 13 Z"/>
+          </svg>
+        </div>
+        <div class="name">Workers Assets</div>
+        <div class="desc"><code>public/</code> bound as <code>ASSETS</code>.</div>
+      </div>
+      <div class="tech">
+        <div class="ico">
+          <!-- KV database cylinder -->
+          <svg width="30" height="30" viewBox="0 0 32 32" fill="none" stroke="#B85A3D" stroke-width="1.8" stroke-linejoin="round">
+            <ellipse cx="16" cy="8" rx="9" ry="3.2" fill="#FBEDE3"/>
+            <path d="M7 8 V 22 C 7 23.8 11 25.2 16 25.2 C 21 25.2 25 23.8 25 22 V 8" fill="#FBEDE3"/>
+            <ellipse cx="16" cy="14.5" rx="9" ry="3.2" fill="none"/>
+          </svg>
+        </div>
+        <div class="name">Workers KV</div>
+        <div class="desc">Per-tool namespace (e.g. <code>APP_KV</code>).</div>
+      </div>
+      <div class="tech">
+        <div class="ico">
+          <!-- Wrench / wrangler -->
+          <svg width="30" height="30" viewBox="0 0 32 32" fill="none" stroke="#B85A3D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 4 a6 6 0 0 0 -6 9.4 L 4 24.5 L 7.5 28 L 18.6 17 A 6 6 0 0 0 28 11 L 24 14 L 22 12 L 22 9 L 25 7 Z" fill="#FBEDE3"/>
+          </svg>
+        </div>
+        <div class="name">Wrangler</div>
+        <div class="desc"><code>wrangler dev</code> / <code>deploy</code>.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== ACCESS MODEL ========== -->
+  <section>
+    <h2>Access model</h2>
+    <p class="sub">Access is per-tool and per-person — a team member can hold Deploy rights on one tool and only View rights on another. Accounts use email + password; no SSO is required.</p>
+
+    <div class="access-grid">
+      <div class="access-card deploy">
+        <div class="ac-icon">
+          <!-- Rocket / deploy icon -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B85A3D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2 C 12 2 7 6 7 13 L 12 22 L 17 13 C 17 6 12 2 12 2 Z" fill="#FBEDE3"/>
+            <circle cx="12" cy="11" r="2"/>
+            <path d="M7 13 L 3 16 M 17 13 L 21 16"/>
+          </svg>
+        </div>
+        <h4>Deploy rights</h4>
+        <div class="ac-who">Tool Owner / Backend</div>
+        <p>Push new code or assets and trigger a deploy. Includes all Content and View capabilities. Typically held by the Tool Owner (Developer) for app changes, and always by the Backend team for platform changes.</p>
+      </div>
+
+      <div class="access-card content">
+        <div class="ac-icon">
+          <!-- Edit / pencil icon -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4F6F53" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4 H 4 a 2 2 0 0 0 -2 2 v 14 a 2 2 0 0 0 2 2 h 14 a 2 2 0 0 0 2 -2 v -7" fill="#ECF2EC"/>
+            <path d="M18.5 2.5 a 2.12 2.12 0 0 1 3 3 L 12 15 l -4 1 1 -4 9.5 -9.5 Z"/>
+          </svg>
+        </div>
+        <h4>Content rights</h4>
+        <div class="ac-who">Contributor</div>
+        <p>Edit data and content inside the tool without touching code or triggering deploys. Suited for team members who manage entries, review submissions, or update configuration through the tool's UI.</p>
+      </div>
+
+      <div class="access-card view">
+        <div class="ac-icon">
+          <!-- Eye icon -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9F6E2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12 C 4 6 8 3 12 3 C 16 3 20 6 23 12 C 20 18 16 21 12 21 C 8 21 4 18 1 12 Z" fill="#F7EBD2"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </div>
+        <h4>View rights</h4>
+        <div class="ac-who">Viewer</div>
+        <p>Read-only access to the tool. Can see all data and outputs but cannot make changes or trigger any actions. Useful for stakeholders, auditors, or anyone who needs visibility without edit capability.</p>
+      </div>
+    </div>
+
+    <div class="access-meta">
+      <div class="access-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Right</th>
+              <th>Tool Owner</th>
+              <th>Contributor</th>
+              <th>Viewer</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Deploy rights</td>
+              <td><span class="check">&#10003;</span></td>
+              <td><span class="dash">&#8211;</span></td>
+              <td><span class="dash">&#8211;</span></td>
+            </tr>
+            <tr>
+              <td>Content rights</td>
+              <td><span class="check">&#10003;</span></td>
+              <td><span class="check">&#10003;</span></td>
+              <td><span class="dash">&#8211;</span></td>
+            </tr>
+            <tr>
+              <td>View rights</td>
+              <td><span class="check">&#10003;</span></td>
+              <td><span class="check">&#10003;</span></td>
+              <td><span class="check">&#10003;</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="auth-note">
+        <h4>Auth &amp; provisioning</h4>
+        <div class="kv">
+          <div class="kv-row">
+            <span class="kv-label">Method</span>
+            <span class="kv-val">email + password</span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-label">SSO</span>
+            <span class="kv-val">not required</span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-label">Scope</span>
+            <span class="kv-val">per-tool</span>
+          </div>
+        </div>
+        <p>Accounts are provisioned by the Backend team. A user can hold different rights on different tools — Deploy on Tool X, View on Tool Y. Backend manages the access list for the platform; Tool Owners manage their own tool's contributor list within those bounds.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== BOUNDARY ========== -->
+  <section>
+    <h2>Ownership boundary</h2>
+    <p class="sub">The line between Developer and Backend is what keeps the harness predictable. Anything in the left column is a Developer edit; anything in the right requires Backend review.</p>
+    <div class="boundary">
+      <div class="zone d">
+        <div class="zone-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4F6F53" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 8 L 5 12 L 9 16"/>
+            <path d="M15 8 L 19 12 L 15 16"/>
+            <path d="M13 5 L 11 19" opacity="0.7"/>
+          </svg>
+        </div>
+        <h4>Developer edits</h4>
+        <div class="who-line">Developer — owns app behavior</div>
+        <ul>
+          <li><code>src/worker.js</code> route handlers &amp; business logic</li>
+          <li><code>public/</code> static UI, HTML, assets</li>
+          <li>Local <code>wrangler dev</code> loop</li>
+          <li>App-level tests &amp; data model</li>
+          <li>Manage access lists for their tool</li>
+        </ul>
+      </div>
+      <div class="arrow">
+        <svg width="60" height="28" viewBox="0 0 60 28" fill="none" stroke="#9A9286" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 14 L 50 14"/>
+          <path d="M44 8 L 52 14 L 44 20"/>
+        </svg>
+      </div>
+      <div class="zone b">
+        <div class="zone-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9F6E2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3.5"/>
+            <path d="M12 2 V 5 M 12 19 V 22 M 2 12 H 5 M 19 12 H 22 M 4.5 4.5 L 6.5 6.5 M 17.5 17.5 L 19.5 19.5 M 4.5 19.5 L 6.5 17.5 M 17.5 6.5 L 19.5 4.5"/>
+          </svg>
+        </div>
+        <h4>Backend reviews / owns</h4>
+        <div class="who-line">Backend — owns platform</div>
+        <ul>
+          <li><code>wrangler.toml</code>: account_id, KV ids, bindings</li>
+          <li>Auth seam, secrets, environment</li>
+          <li>Asset path normalization for CF hosting</li>
+          <li><code>.github/workflows/</code> deploy gates</li>
+          <li>Provision platform accounts, assign initial rights</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SCENARIOS OVERVIEW ========== -->
+  <section>
+    <h2>Three scenarios for getting a tool into the repo</h2>
+    <p class="sub">Every tool that lands in this repository arrives through one of three paths. They share the same end state — a Cloudflare-deployed, harness-compliant folder — but differ in who starts the work and how much restructuring is needed. Each one is detailed in its own section below.</p>
+
+    <div class="overview">
+      <a href="#scenario-1" class="overview-card" style="text-decoration:none">
+        <div class="ov-num">01</div>
+        <div class="ov-title">Import an existing zip</div>
+        <div class="ov-desc">Developer hands off a locally-tested web app as a zip. Backend places it in the repo and adapts it for Cloudflare hosting.</div>
+        <div class="ov-tags"><span class="who d">Developer</span><span class="who b">Backend</span></div>
+      </a>
+      <a href="#scenario-2" class="overview-card" style="text-decoration:none">
+        <div class="ov-num">02</div>
+        <div class="ov-title">Greenfield via skill</div>
+        <div class="ov-desc">Developer starts a new tool inside the repo with <code>/create_tool</code>. The skill scaffolds a harness-compliant tool from minute one.</div>
+        <div class="ov-tags"><span class="who d">Developer</span><span class="who s">Harness</span></div>
+      </a>
+      <a href="#scenario-3" class="overview-card" style="text-decoration:none">
+        <div class="ov-num">03</div>
+        <div class="ov-title">Migrate an in-repo app</div>
+        <div class="ov-desc">Developer drops an existing app into the repo and runs <code>/migrate_tool</code>. The script does the structural work automatically.</div>
+        <div class="ov-tags"><span class="who d">Developer</span><span class="who s">Harness</span><span class="who b">Backend</span></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ========== SCENARIO 01 ========== -->
+  <section id="scenario-1">
+    <h2><span class="num">01</span>Import an existing zip <span class="tag">Developer brings, Backend onboards</span></h2>
+    <p class="sub">Developer hands off a locally-tested web app as a zip. Backend team places it in the repo and adapts it for Cloudflare hosting before handing the keys back.</p>
+
+    <div class="scenario">
+      <div class="illus">
+        <!-- Zip package flowing into structured repo -->
+        <svg viewBox="0 0 280 320" xmlns="http://www.w3.org/2000/svg">
+          <!-- Soft background -->
+          <ellipse cx="140" cy="160" rx="125" ry="140" fill="#FBEDE3" opacity="0.5"/>
+
+          <!-- Zip package at top -->
+          <g transform="translate(95, 30)">
+            <rect width="90" height="70" rx="6" fill="#D97757" stroke="#1F1B16" stroke-width="2"/>
+            <!-- Zipper -->
+            <path d="M45 0 L 45 70" stroke="#1F1B16" stroke-width="1.5" stroke-dasharray="3 2"/>
+            <circle cx="45" cy="38" r="4" fill="#1F1B16"/>
+            <path d="M45 38 L 41 46" stroke="#1F1B16" stroke-width="1.5"/>
+            <!-- ZIP label -->
+            <text x="45" y="20" text-anchor="middle" font-family="Fraunces, serif" font-size="11" fill="#FFFFFF" font-weight="600">.zip</text>
+            <!-- Tag -->
+            <path d="M70 -8 L 80 2 L 75 10 L 65 0 Z" fill="#F4D9CB" stroke="#1F1B16" stroke-width="1.5"/>
+            <circle cx="70" cy="0" r="1.5" fill="#1F1B16"/>
+          </g>
+
+          <!-- Arrow flowing down -->
+          <g transform="translate(140, 120)">
+            <path d="M0 0 Q 0 15 0 30" stroke="#1F1B16" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-dasharray="4 3"/>
+            <path d="M-5 24 L 0 32 L 5 24" stroke="#1F1B16" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+
+          <!-- B figure inspecting -->
+          <g transform="translate(30, 145)">
+            <circle cx="14" cy="14" r="11" fill="#F7EBD2" stroke="#1F1B16" stroke-width="1.6"/>
+            <path d="M3 44 Q 3 28 14 28 Q 25 28 25 44" fill="#C68B3A" stroke="#1F1B16" stroke-width="1.6"/>
+            <circle cx="11" cy="13" r="0.9" fill="#1F1B16"/>
+            <circle cx="17" cy="13" r="0.9" fill="#1F1B16"/>
+          </g>
+
+          <!-- Structured repo destination -->
+          <g transform="translate(80, 165)">
+            <rect width="120" height="120" rx="8" fill="#FFFFFF" stroke="#1F1B16" stroke-width="2"/>
+            <!-- Tab -->
+            <path d="M0 -10 L 30 -10 L 36 0 L 0 0 Z" fill="#6B8E6F" stroke="#1F1B16" stroke-width="2" stroke-linejoin="round"/>
+            <!-- Inner structure: file rows -->
+            <g transform="translate(12, 14)">
+              <rect width="14" height="10" rx="1.5" fill="#C68B3A"/>
+              <rect x="20" y="2" width="60" height="6" rx="1" fill="#E5DCC9"/>
+              <rect y="18" width="14" height="10" rx="1.5" fill="#C68B3A"/>
+              <rect x="20" y="20" width="50" height="6" rx="1" fill="#E5DCC9"/>
+              <rect y="36" width="14" height="10" rx="1.5" fill="#6B8E6F"/>
+              <rect x="20" y="38" width="40" height="6" rx="1" fill="#E5DCC9"/>
+              <rect y="54" width="14" height="10" rx="1.5" fill="#6B8E6F"/>
+              <rect x="20" y="56" width="56" height="6" rx="1" fill="#E5DCC9"/>
+              <rect y="72" width="14" height="10" rx="1.5" fill="#9A9286"/>
+              <rect x="20" y="74" width="36" height="6" rx="1" fill="#E5DCC9"/>
+            </g>
+          </g>
+
+          <!-- KV cylinder badge -->
+          <g transform="translate(220, 250)">
+            <ellipse cx="0" cy="0" rx="22" ry="6" fill="#FBEDE3" stroke="#1F1B16" stroke-width="1.6"/>
+            <path d="M-22 0 V 14 C -22 18 -10 20 0 20 C 10 20 22 18 22 14 V 0" fill="#FBEDE3" stroke="#1F1B16" stroke-width="1.6"/>
+            <ellipse cx="0" cy="0" rx="22" ry="6" fill="none" stroke="#1F1B16" stroke-width="1.6"/>
+            <text x="0" y="33" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="11" fill="#9F6E2C">KV</text>
+          </g>
+
+          <!-- Sparkle -->
+          <g transform="translate(50, 50)" stroke="#D97757" stroke-width="1.5" stroke-linecap="round" fill="none">
+            <path d="M0 -6 L 0 6"/>
+            <path d="M-6 0 L 6 0"/>
+          </g>
+        </svg>
+        <div class="caption">zip → harness-shaped folder</div>
+      </div>
+
+      <div class="flow">
+        <div class="step">
+          <div class="gutter"><div class="pill d">1</div><div class="line"></div></div>
+          <div class="body">
+            <div class="title">Kickoff <span class="who d">Developer</span></div>
+            <p>A short call or Slack thread where Developer walks Backend through the app. No formal document required — just enough shared context for Backend to configure deployment correctly.</p>
+            <div class="brief-grid">
+              <div><strong>Worth touching on</strong>purpose, stack, storage needs, auth model, external services, secrets, routes, and any quirks.</div>
+            </div>
+            <div class="artifacts">
+              <span class="chip">15–30 min</span>
+              <span class="chip">notes optional</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="gutter"><div class="pill d">2</div><div class="line"></div></div>
+          <div class="body">
+            <div class="title">Hand-off <span class="who d">Developer</span></div>
+            <p>Developer delivers a zip of a working web app. Local correctness is assumed; runtime target is not Cloudflare yet.</p>
+            <div class="artifacts">
+              <span class="chip">mytool.zip</span>
+              <span class="chip">README / run notes</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="gutter"><div class="pill b">3</div><div class="line"></div></div>
+          <div class="body">
+            <div class="title">Place in repo <span class="who b">Backend</span></div>
+            <p>Unzip into a new top-level folder matching the convention. Strip <code>node_modules</code>, lockfiles for non-supported runtimes, and OS cruft.</p>
+            <div class="artifacts">
+              <span class="chip">/&lt;tool-name&gt;/</span>
+              <span class="chip warn">drop: __MACOSX, .DS_Store</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="gutter"><div class="pill b">4</div><div class="line"></div></div>
+          <div class="body">
+            <div class="title">Configure deployment <span class="who b">Backend</span></div>
+            <p>With the kickoff context in hand, author <code>wrangler.toml</code> with account_id + KV namespace, register required secrets, and restructure source so static files move to <code>public/</code> and the server entry becomes a Worker fetch handler. Asset paths are URL-encoded for CF.</p>
+            <div class="artifacts">
+              <span class="chip">wrangler.toml</span>
+              <span class="chip">src/worker.js</span>
+              <span class="chip">public/</span>
+              <span class="chip">KV: APP_KV</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="gutter"><div class="pill b">5</div><div class="line"></div></div>
+          <div class="body">
+            <div class="title">Smoke test &amp; first deploy <span class="who b">Backend</span></div>
+            <p><code>wrangler dev</code> locally, then <code>wrangler deploy</code>. CI gate verifies KV binding, asset directory, and auth seam exist.</p>
+            <div class="artifacts">
+              <span class="chip ok">deployed</span>
+              <span class="chip">CI: harness checks pass</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="gutter"><div class="pill d">6</div></div>
+          <div class="body">
+            <div class="title">Hand-back <span class="who d">Developer</span></div>
+            <p>Developer takes over. Future iteration happens inside the repo against the deployed surface. Backend stays available for harness-level changes only.</p>
+            <div class="artifacts">
+              <span class="chip ok">Developer owns iteration</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SCENARIO 02 ========== -->
+  <section id="scenario-2">
+    <h2><span class="num">02</span>Greenfield via skill <span class="tag">Developer-led, harness-scaffolded</span></h2>
+    <p class="sub">Developer starts a new tool inside the repo using a skill that B authored. The skill scaffolds a tool that is harness-compliant from minute one.</p>
+
+    <div class="scenario">
+      <div class="illus">
+        <!-- Sprout / spark in a pot of structured rows -->
+        <svg viewBox="0 0 280 320" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="140" cy="170" rx="125" ry="135" fill="#ECF2EC" opacity="0.6"/>
+
+          <!-- Sparkle/star at top -->
+          <g transform="translate(140, 50)" stroke="#D97757" stroke-width="2" stroke-linecap="round" fill="#FBEDE3">
+            <path d="M0 -28 L 5 -8 L 25 -3 L 8 7 L 13 27 L 0 15 L -13 27 L -8 7 L -25 -3 L -5 -8 Z"/>
+          </g>
+
+          <!-- Command label -->
+          <g transform="translate(45, 100)">
+            <rect width="190" height="28" rx="6" fill="#1F1B16"/>
+            <text x="14" y="19" font-family="JetBrains Mono, monospace" font-size="11" fill="#FAF9F5">/create_tool mytool</text>
+            <rect x="174" y="8" width="2" height="13" fill="#D97757">
+              <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+            </rect>
+          </g>
+
+          <!-- Arrow down -->
+          <g transform="translate(140, 138)">
+            <path d="M0 0 L 0 22" stroke="#1F1B16" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-dasharray="3 3"/>
+            <path d="M-5 16 L 0 24 L 5 16" stroke="#1F1B16" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+
+          <!-- Sprout: stem + leaves emerging from pot -->
+          <g transform="translate(140, 170)">
+            <!-- Stem -->
+            <path d="M0 80 Q 0 50 0 30" stroke="#6B8E6F" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- Left leaf -->
+            <path d="M0 50 Q -20 40 -22 25 Q -10 30 0 45" fill="#6B8E6F" stroke="#1F1B16" stroke-width="1.5"/>
+            <!-- Right leaf -->
+            <path d="M0 35 Q 22 25 24 8 Q 10 14 0 30" fill="#6B8E6F" stroke="#1F1B16" stroke-width="1.5"/>
+            <!-- Top sprout tip with spark -->
+            <circle cx="0" cy="28" r="4" fill="#D97757" stroke="#1F1B16" stroke-width="1.5"/>
+          </g>
+
+          <!-- Pot / scaffolded folder -->
+          <g transform="translate(80, 245)">
+            <path d="M5 0 L 115 0 L 105 50 L 15 50 Z" fill="#FFFFFF" stroke="#1F1B16" stroke-width="2" stroke-linejoin="round"/>
+            <!-- Inner structure rows -->
+            <rect x="20" y="10" width="14" height="6" rx="1" fill="#C68B3A"/>
+            <rect x="40" y="11" width="50" height="4" rx="1" fill="#E5DCC9"/>
+            <rect x="22" y="22" width="14" height="6" rx="1" fill="#6B8E6F"/>
+            <rect x="42" y="23" width="40" height="4" rx="1" fill="#E5DCC9"/>
+            <rect x="24" y="34" width="14" height="6" rx="1" fill="#6B8E6F"/>
+            <rect x="44" y="35" width="46" height="4" rx="1" fill="#E5DCC9"/>
+          </g>
+
+          <!-- Side sparkles -->
+          <g transform="translate(50, 90)" stroke="#6B8E6F" stroke-width="1.5" stroke-linecap="round" fill="none">
+            <path d="M0 -5 L 0 5"/>
+            <path d="M-5 0 L 5 0"/>
+          </g>
+          <g transform="translate(225, 200)" stroke="#D97757" stroke-width="1.5" stroke-linecap="round" fill="none">
+            <path d="M0 -6 L 0 6"/>
+            <path d="M-6 0 L 6 0"/>
+          </g>
+        </svg>
+        <div class="caption">a skill grows the scaffold</div>
+      </div>
+
+      <div class="flow">
+        <div class="step">
+          <div class="gutter"><div class="pill d">1</div><div class="line"></div></div>
+          <div class="body">
+            <div class="title">Invoke the skill <span class="who d">Developer</span></div>
+            <p>Developer runs <span class="cmd">/create_tool mytool "this tool should work like ..."</span> — a description, not a spec. The skill turns it into a scaffold.</p>
+            <div class="artifacts">
+              <span class="chip">.claude/skills/create_tool</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="gutter"><div class="pill s">2</div><div class="line"></div></div>
+          <div class="body">
+            <div class="title">Skill scaffolds the tool <span class="who s">Harness</span></div>
+            <p>Generates the canonical layout: <code>src/worker.js</code> with auth + KV stub, empty <code>public/index.html</code>, <code>wrangler.toml</code> placeholder, <code>package.json</code> with dev/deploy scripts.</p>
+            <div class="artifacts">
+              <span class="chip">/mytool/src/worker.js</span>
+              <span class="chip">/mytool/public/</span>
+              <span class="chip">/mytool/wrangler.toml</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="gutter"><div class="pill b">3</div><div class="line"></div></div>
+          <div class="body">
+            <div class="title">Backend fills in platform values <span class="who b">Backend</span></div>
+            <p>Backend provisions the KV namespace and writes the real <code>account_id</code>, <code>kv_namespaces[].id</code>, and <code>preview_id</code>. This stays a Backend-only edit.</p>
+            <div class="artifacts">
+              <span class="chip">KV: provisioned</span>
+              <span class="chip">wrangler.toml: filled</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="gutter"><div class="pill d">4</div></div>
+          <div class="body">
+            <div class="title">Developer builds the feature <span class="who d">Developer</span></div>
+            <p><code>wrangler dev</code> works on first run. Developer iterates on routes, UI, and data model; the harness already enforces shape.</p>
+            <div class="artifacts">
+              <span class="chip ok">harness-compliant from day 0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SCENARIO 03 ========== -->
+  <section id="scenario-3">
+    <h2><span class="num">03</span>Migrate an in-repo app <span class="tag">Developer-led, automated</span></h2>
+    <p class="sub">Developer drops an existing app into the repo and runs the migration skill. The script does the structural work that B did manually in Scenario 1.</p>
+
+    <div class="scenario">
+      <div class="illus">
+        <!-- Old folder transforming into new harness folder -->
+        <svg viewBox="0 0 280 320" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="140" cy="170" rx="125" ry="135" fill="#F7EBD2" opacity="0.5"/>
+
+          <!-- Old, irregular folder -->
+          <g transform="translate(40, 60)">
+            <path d="M0 10 L 12 0 L 60 0 L 70 10 L 80 8 L 80 70 L 0 70 Z"
+                  fill="#FFFFFF" stroke="#1F1B16" stroke-width="1.8" stroke-dasharray="5 3" stroke-linejoin="round"/>
+            <!-- Messy contents -->
+            <rect x="12" y="22" width="22" height="6" rx="1" fill="#9A9286" opacity="0.6"/>
+            <rect x="40" y="22" width="30" height="6" rx="1" fill="#9A9286" opacity="0.4"/>
+            <rect x="12" y="34" width="40" height="6" rx="1" fill="#9A9286" opacity="0.6"/>
+            <rect x="58" y="34" width="14" height="6" rx="1" fill="#9A9286" opacity="0.3"/>
+            <rect x="12" y="46" width="18" height="6" rx="1" fill="#9A9286" opacity="0.5"/>
+            <rect x="36" y="46" width="34" height="6" rx="1" fill="#9A9286" opacity="0.6"/>
+            <rect x="12" y="58" width="48" height="6" rx="1" fill="#9A9286" opacity="0.4"/>
+            <text x="40" y="92" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="11" fill="#6E665B">raw drop</text>
+          </g>
+
+          <!-- Migration pipe with gear -->
+          <g transform="translate(140, 170)">
+            <!-- Pipe -->
+            <rect x="-8" y="-30" width="16" height="60" fill="#FAF9F5" stroke="#1F1B16" stroke-width="1.8"/>
+            <rect x="-12" y="-32" width="24" height="6" fill="#FAF9F5" stroke="#1F1B16" stroke-width="1.8"/>
+            <rect x="-12" y="26" width="24" height="6" fill="#FAF9F5" stroke="#1F1B16" stroke-width="1.8"/>
+            <!-- Gear in pipe -->
+            <g>
+              <circle r="11" fill="#D97757" stroke="#1F1B16" stroke-width="1.8"/>
+              <g stroke="#1F1B16" stroke-width="1.5" stroke-linecap="round">
+                <path d="M0 -14 L 0 -10"/>
+                <path d="M0 14 L 0 10"/>
+                <path d="M-14 0 L -10 0"/>
+                <path d="M14 0 L 10 0"/>
+              </g>
+              <circle r="3.5" fill="#FBEDE3"/>
+            </g>
+            <text y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#1F1B16">/migrate_tool</text>
+          </g>
+
+          <!-- Arrow connections -->
+          <path d="M120 100 Q 130 100 132 130" stroke="#1F1B16" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-dasharray="3 3"/>
+          <path d="M148 200 Q 150 230 165 240" stroke="#1F1B16" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-dasharray="3 3"/>
+          <path d="M160 235 L 166 244 L 156 246" stroke="#1F1B16" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+          <!-- New, clean folder -->
+          <g transform="translate(170, 230)">
+            <path d="M0 -10 L 30 -10 L 36 0 L 0 0 Z" fill="#6B8E6F" stroke="#1F1B16" stroke-width="2" stroke-linejoin="round"/>
+            <rect width="80" height="60" rx="6" fill="#FFFFFF" stroke="#1F1B16" stroke-width="2"/>
+            <rect x="10" y="10" width="14" height="6" rx="1" fill="#C68B3A"/>
+            <rect x="28" y="11" width="40" height="4" rx="1" fill="#E5DCC9"/>
+            <rect x="10" y="22" width="14" height="6" rx="1" fill="#6B8E6F"/>
+            <rect x="28" y="23" width="34" height="4" rx="1" fill="#E5DCC9"/>
+            <rect x="10" y="34" width="14" height="6" rx="1" fill="#6B8E6F"/>
+            <rect x="28" y="35" width="44" height="4" rx="1" fill="#E5DCC9"/>
+            <rect x="10" y="46" width="14" height="6" rx="1" fill="#9A9286"/>
+            <rect x="28" y="47" width="28" height="4" rx="1" fill="#E5DCC9"/>
+            <text x="40" y="78" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="11" fill="#4F6F53">harness-shaped</text>
+          </g>
+
+          <!-- Sparkles -->
+          <g transform="translate(235, 90)" stroke="#D97757" stroke-width="1.5" stroke-linecap="round" fill="none">
+            <path d="M0 -6 L 0 6"/>
+            <path d="M-6 0 L 6 0"/>
+          </g>
+        </svg>
+        <div class="caption">/migrate_tool reshapes the folder</div>
+      </div>
+
+      <div class="flow">
+        <div class="step">
+          <div class="gutter"><div class="pill d">1</div><div class="line"></div></div>
+          <div class="body">
+            <div class="title">Kickoff <span class="who d">Developer</span></div>
+            <p>Same short intro as Scenario 1 — a quick call or Slack thread covering purpose, stack, storage, auth, secrets, and quirks. The migration script handles structure, but Backend still needs the context to provision KV and secrets correctly.</p>
+            <div class="artifacts">
+              <span class="chip">15–30 min</span>
+              <span class="chip">notes optional</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="gutter"><div class="pill d">2</div><div class="line"></div></div>
+          <div class="body">
+            <div class="title">Drop the app in <span class="who d">Developer</span></div>
+            <p>Developer copies an existing project folder into the repo as <code>/&lt;tool-name&gt;/</code>. No restructuring yet.</p>
+            <div class="artifacts">
+              <span class="chip">/mytool/ (raw)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="gutter"><div class="pill s">3</div><div class="line"></div></div>
+          <div class="body">
+            <div class="title">Run the migration <span class="who s">Harness</span></div>
+            <p><span class="cmd">/migrate_tool mytool</span> detects the current shape (Express server, Vite app, plain static, etc.), moves static files into <code>public/</code>, generates a <code>worker.js</code> that proxies to <code>ASSETS</code>, and writes a <code>wrangler.toml</code> with placeholders.</p>
+            <div class="artifacts">
+              <span class="chip">detect: server type</span>
+              <span class="chip">rewrite: asset paths</span>
+              <span class="chip">emit: worker.js</span>
+              <span class="chip warn">placeholders: account_id, KV id</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="gutter"><div class="pill b">4</div><div class="line"></div></div>
+          <div class="body">
+            <div class="title">Backend reviews + provisions <span class="who b">Backend</span></div>
+            <p>With kickoff context in hand, Backend fills the placeholders, creates the KV namespace, registers any required secrets, and approves the PR. CI gate is the same as Scenario 1.</p>
+            <div class="artifacts">
+              <span class="chip">PR review</span>
+              <span class="chip">KV: provisioned</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="gutter"><div class="pill d">5</div></div>
+          <div class="body">
+            <div class="title">Developer deploys and continues <span class="who d">Developer</span></div>
+            <p><code>wrangler deploy</code>. The app is now on the same harness as every other tool.</p>
+            <div class="artifacts">
+              <span class="chip ok">migrated</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== GUARDRAILS ========== -->
+  <section>
+    <h2>Harness guardrails</h2>
+    <p class="sub">The repo isn't just a folder — it's a set of enforced conventions. CI fails fast when a tool drifts.</p>
+    <div class="rails">
+      <div class="rail amber">
+        <div class="rico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9F6E2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="4" width="16" height="16" rx="2"/>
+            <path d="M9 12 L 11 14 L 15 10"/>
+          </svg>
+        </div>
+        <div>
+          <div class="name">Layout check</div>
+          <div class="desc">Every tool folder must have <code>src/worker.js</code>, <code>public/</code>, <code>wrangler.toml</code>, <code>package.json</code>.</div>
+        </div>
+      </div>
+
+      <div class="rail amber">
+        <div class="rico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9F6E2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 6 L 12 3 L 20 6 V 12 C 20 17 16 20 12 21 C 8 20 4 17 4 12 Z"/>
+            <path d="M9 12 L 11 14 L 15 10"/>
+          </svg>
+        </div>
+        <div>
+          <div class="name">Wrangler validation</div>
+          <div class="desc"><code>account_id</code> set, KV namespace bound, assets directory points at <code>./public</code>.</div>
+        </div>
+      </div>
+
+      <div class="rail amber">
+        <div class="rico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9F6E2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="11" width="14" height="9" rx="1.5"/>
+            <path d="M8 11 V 7 a 4 4 0 0 1 8 0 v 4"/>
+          </svg>
+        </div>
+        <div>
+          <div class="name">No secrets in repo</div>
+          <div class="desc">Secrets via <code>wrangler secret</code>. CI greps for stray tokens, hashes, account ids in PRs.</div>
+        </div>
+      </div>
+
+      <div class="rail sage">
+        <div class="rico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F6F53" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="9" r="4"/>
+            <path d="M5 21 c 0 -4 3 -7 7 -7 s 7 3 7 7"/>
+            <circle cx="18" cy="6" r="1.5" fill="#D97757" stroke="none"/>
+          </svg>
+        </div>
+        <div>
+          <div class="name">Auth seam present</div>
+          <div class="desc">Worker exposes a recognizable auth handler; new tools can't ship public-by-default.</div>
+        </div>
+      </div>
+
+      <div class="rail sage">
+        <div class="rico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F6F53" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="6" width="18" height="13" rx="2"/>
+            <circle cx="9" cy="12" r="1.5"/>
+            <path d="M3 17 L 9 12 L 14 16 L 21 9"/>
+          </svg>
+        </div>
+        <div>
+          <div class="name">Asset path encoding</div>
+          <div class="desc">Spaces in asset names URL-encoded — caught by a static check before deploy.</div>
+        </div>
+      </div>
+
+      <div class="rail">
+        <div class="rico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B85A3D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3 L 14 9 L 21 9 L 15 13 L 17 20 L 12 16 L 7 20 L 9 13 L 3 9 L 10 9 Z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="name">Skill-driven scaffolding</div>
+          <div class="desc"><code>/create_tool</code> and <code>/migrate_tool</code> are the only blessed entry points for new folders.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>
+      Reference implementation: <code>design-review-tool/</code>. Scenarios apply to every future tool that lands in this repo.
+    </div>
+    <div class="signature">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="#D97757">
+        <path d="M8 0 L 9.5 5 L 14.5 6 L 10.5 9 L 12 14 L 8 11 L 4 14 L 5.5 9 L 1.5 6 L 6.5 5 Z"/>
+      </svg>
+      crafted in clay &amp; cream
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

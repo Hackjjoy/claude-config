@@ -8,6 +8,21 @@
 * **Batch clarifications** — if clarification is genuinely needed, ask all questions in one turn rather than serially.
 * **Calibrate response length to task complexity** — short answer for short questions; expand only when the task warrants it. Match length to the work, not to a default verbosity.
 
+## Workflow Rules
+
+### Plan → Implement → Verify
+Whenever a task is non-trivial enough to warrant a plan (Plan Mode, spec-first-workflow, or a multi-step TodoWrite), the plan **must** end with a `verify` step. Do not mark the task complete without running it.
+
+The `verify` step **must** be delegated to the `verifier` subagent — never self-verify. The main agent's brief to `verifier` must include:
+1. **Goal** — what the user originally asked for (one or two sentences).
+2. **Plan** — the steps that were executed.
+3. **What changed** — files touched and the diff range (e.g., `git diff main...HEAD` or commit SHAs).
+4. **Concerns** — anything the main agent is unsure about (optional but encouraged).
+
+If `verifier` returns FAIL, address the blocking items before reporting the task as done. If it returns PASS with non-blocking notes, surface those to the user in your end-of-turn summary.
+
+Skip the verify step only when: (a) the change is a single trivial edit (typo, comment, one-line config) **and** no plan was made, or (b) the user explicitly says "skip verify". Err toward verifying.
+
 ## Environment
 
 * Do not use UTF-8 emoji in terminal output

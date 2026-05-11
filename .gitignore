@@ -18,6 +18,7 @@ stats-cache.json
 history.jsonl
 
 .session-stats.json
+.last-cleanup
 mcp-needs-auth-cache.json
 
 node_modules/

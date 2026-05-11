@@ -7,6 +7,7 @@
 * **Act, don't echo** — start work on the given task immediately. Do not restate or rewrite the user's prompt before proceeding.
 * **Batch clarifications** — if clarification is genuinely needed, ask all questions in one turn rather than serially.
 * **Calibrate response length to task complexity** — short answer for short questions; expand only when the task warrants it. Match length to the work, not to a default verbosity.
+* **Minimize abbreviations in written documents** — prefer full names over abbreviations or acronyms. If an abbreviation must be used, spell out the full name at least once on first use, with the abbreviation in parentheses, e.g., "Conversion Rate (CVR)". After that first mention, the short form is fine. Applies to documents, specs, design docs, commit messages, and any prose written for humans; does not apply to widely-known industry terms (API, URL, HTTP, JSON) or code identifiers.
 
 ## Workflow Rules
 

@@ -28,7 +28,11 @@ Skip the verify step only when: (a) the change is a single trivial edit (typo, c
 
 * Do not use UTF-8 emoji in terminal output
 
-### Naming Conventions
+## Language-Specific Conventions
+
+The conventions below apply **only to TypeScript / JavaScript projects**. For other stacks (Python, Go, Rust, etc.), follow that language's idiomatic conventions and defer to the project-level `CLAUDE.md`.
+
+### Naming Conventions (TS/JS)
 * Variables/functions: camelCase (`userId`, `fetchData`)
 * Classes: PascalCase (`UserManager`)
 * Interfaces: PascalCase, `I` prefix optional (`UserData` or `IUserData`)
@@ -36,13 +40,13 @@ Skip the verify step only when: (a) the change is a single trivial edit (typo, c
 * Constants: UPPER_SNAKE_CASE (`MAX_RETRY_ATTEMPTS`)
 * Private: prefix underscore or use `private` keyword (`_state` or `private state`)
 
-### Formatting
+### Formatting (TS/JS)
 * 2-space indentation
 * Semicolons required
 * Single quotes for strings
 * Use `eslint` + `prettier` + `@typescript-eslint`
 
-### Documentation
+### Documentation (TS/JS)
 Add JSDoc comments for public functions with params, returns, and throws.
 
 ## Git Conventions

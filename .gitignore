@@ -25,3 +25,9 @@ node_modules/
 session-env/
 backups/
 sessions/
+
+daemon/
+daemon.lock
+daemon.log
+daemon.status.json
+jobs/

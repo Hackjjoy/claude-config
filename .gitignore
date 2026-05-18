@@ -31,3 +31,6 @@ daemon.lock
 daemon.log
 daemon.status.json
 jobs/
+
+.DS_Store
+teams/

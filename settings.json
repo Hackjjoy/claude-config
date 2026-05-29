@@ -7,9 +7,7 @@
       "Bash(prompt*)",
       "Bash(git commit *)",
       "Bash(npm install*)",
-      "Read(*)",
-      "Update(*)",
-      "Write(*)",
+      "Read(*)",      "Write(*)",
       "Edit(*)",
       "Bash(docker *)",
       "Bash(cp *)",
@@ -17,8 +15,8 @@
       "Bash(gh *)",
       "Bash(gcloud *)",
       "Bash(curl *)",
-      "Web Search(*)",
-      "Fetch(*)",
+      "WebSearch",
+      "WebFetch",
       "Bash(mkdir *)"
     ],
     "defaultMode": "auto"
@@ -52,10 +50,13 @@
   "enabledPlugins": {
     "codex@openai-codex": true,
     "claude-hud@claude-hud": true,
-    "warp@claude-code-warp": true,
     "ralph-loop@claude-plugins-official": true,
     "playwright@claude-plugins-official": true,
-    "vercel@claude-plugins-official": true
+    "vercel@claude-plugins-official": true,
+    "warp@claude-code-warp": true,
+    "frontend-design@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-hud": {
@@ -64,16 +65,16 @@
         "repo": "jarrodwatts/claude-hud"
       }
     },
-    "claude-code-warp": {
-      "source": {
-        "source": "github",
-        "repo": "warpdotdev/claude-code-warp"
-      }
-    },
     "claude-plugins-official": {
       "source": {
         "source": "github",
         "repo": "anthropics/claude-plugins-official"
+      }
+    },
+    "claude-code-warp": {
+      "source": {
+        "source": "github",
+        "repo": "warpdotdev/claude-code-warp"
       }
     }
   },

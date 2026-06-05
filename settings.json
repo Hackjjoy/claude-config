@@ -81,5 +81,6 @@
   },
   "syntaxHighlightingDisabled": true,
   "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
   "skipAutoPermissionPrompt": true
 }

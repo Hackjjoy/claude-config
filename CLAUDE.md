@@ -30,24 +30,11 @@ Skip the verify step only when: (a) the change is a single trivial edit (typo, c
 
 ## Language-Specific Conventions
 
-The conventions below apply **only to TypeScript / JavaScript projects**. For other stacks (Python, Go, Rust, etc.), follow that language's idiomatic conventions and defer to the project-level `CLAUDE.md`.
+These apply **only to TypeScript / JavaScript projects**. For other stacks (Python, Go, Rust, etc.), follow the language's idiomatic conventions and defer to the project-level `CLAUDE.md`.
 
-### Naming Conventions (TS/JS)
-* Variables/functions: camelCase (`userId`, `fetchData`)
-* Classes: PascalCase (`UserManager`)
-* Interfaces: PascalCase, `I` prefix optional (`UserData` or `IUserData`)
-* Type aliases: PascalCase (`UserStatus`, `AuthRole`)
-* Constants: UPPER_SNAKE_CASE (`MAX_RETRY_ATTEMPTS`)
-* Private: prefix underscore or use `private` keyword (`_state` or `private state`)
-
-### Formatting (TS/JS)
-* 2-space indentation
-* Semicolons required
-* Single quotes for strings
-* Use `eslint` + `prettier` + `@typescript-eslint`
-
-### Documentation (TS/JS)
-Add JSDoc comments for public functions with params, returns, and throws.
+* **Formatting & naming** — defer to the project's `eslint` + `prettier` + `@typescript-eslint` config; don't hand-impose style the tooling already enforces.
+* **Interfaces** — PascalCase, no `I` prefix (`UserData`, not `IUserData`).
+* **Documentation** — JSDoc on public functions: params, returns, throws.
 
 ## Git Conventions
 

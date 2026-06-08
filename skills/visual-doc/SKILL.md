@@ -138,26 +138,36 @@ If you can't draw something cleanly, use a single emblematic icon (folder, gear,
 
 1. **Confirm scope**. Ask the user (in one batched message) for: the topic, primary audience, the 2–3 categories that should map to sage/amber/clay, and the rough section list. Do not invent these.
 2. **Copy the template**. Start from `template.html` in this skill folder — keep the `<style>` block as-is, replace only the body content.
-3. **Draft sections in order**: hero → overview/TOC → content sections → footer. Keep each `.sub` paragraph under 4 lines.
+3. **Draft sections in order**: hero → overview/TOC → content sections → footer. Hold the text budget as you write (see below) — one-sentence `.sub`, structure over prose. Don't draft a paragraph "to fix later"; write it structured the first time.
 4. **Color discipline**: every accent class in the doc must reflect the legend established in step 1. If a category doesn't fit one of the three accents, prefer a neutral card over inventing a new color.
 5. **Illustrations last**. Build content first; add SVG illustrations once the structure is settled. A good doc can ship with 1–2 SVGs, not one per section.
 6. **Self-review checklist** before handing back:
    - [ ] Single `<h1>` in hero, all other section headers are `<h2>` / `<h3>`
    - [ ] One italic Fraunces phrase in the hero headline
    - [ ] Every accent color is used semantically and consistently
-   - [ ] No section is wall-of-text — break into cards/steps/chips
+   - [ ] Text budget held: no paragraph over ~40 words, no card body over 2 sentences
+   - [ ] Every section has at least one structured/visual element (grid, flow, table, chips, or SVG) — not just headings + prose
    - [ ] Responsive collapse works (test at 800px width)
    - [ ] No broken anchors, no missing `</section>`
    - [ ] Footer signature line present
 
-## Readability rules (the bar)
+## Text budget (the hard bar)
 
-- **Scan first, read second.** A reader skimming card titles and pill labels should grasp the doc's shape without reading paragraphs.
-- **One idea per card.** If a card has more than 3 sentences of body copy, split it.
-- **Code where it helps, prose where it doesn't.** File paths, commands, and config keys belong in `<code>`. Avoid mixing inline code into running narrative.
-- **Vertical rhythm.** Section gaps (80px), card gaps (14–18px), inline gaps (6–10px). Do not collapse these to fit more content — add a section instead.
-- **No emoji.** This style does not use emoji. Use SVG icons or Fraunces italic accents instead.
-- **No dark mode.** This palette is cream-on-warm by design. Do not invert.
+The #1 failure of this skill is shipping a wall of prose with styling on top. **Treat text as expensive.** These are hard caps, not suggestions:
+
+- **Hero lede** — 1–2 sentences. Never a paragraph.
+- **Section `.sub`** — one sentence, ≤ 2 lines. It states *intent*, not the content itself.
+- **Card / step body** — ≤ 2 sentences. Need a third? The card is doing two jobs — split it.
+- **No running paragraph anywhere over ~40 words.** Past that, you must convert it (below).
+
+**Convert prose to structure — visual is the default, prose is the fallback.** Before writing any paragraph, try to express it as one of: a labeled card grid, a key→value row, a chip/pill set, a numbered flow, a comparison table, or a small SVG. A reader should get ~80% of the meaning from titles, pills, and structure alone; paragraphs only fill the last 20%. If you just wrote two sentences of explanation, stop and ask "what's the structured form of this?"
+
+**Density target.** Every full screen (~900px tall) must contain at least one non-text element — a card grid, a flow, a table, a chip row, or an SVG. A screen of only headings + paragraphs means restructure, not restyle.
+
+**Kept rules:**
+- **Code where it helps.** File paths, commands, config keys belong in `<code>` — not woven into narrative.
+- **Vertical rhythm.** Section gaps 80px, card gaps 14–18px. Don't collapse them to cram content — add a section instead.
+- **No emoji** — SVG icons or Fraunces italic accents instead. **No dark mode** — cream-on-warm by design.
 
 ## Reference files
 

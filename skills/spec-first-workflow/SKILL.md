@@ -11,7 +11,7 @@ A lightweight spec-driven approach for team codebases: commit the "what and why"
 
 **Commit specs, not plans.** Specs describe intent and remain useful for months. Plans describe execution sequence and go stale the moment they're merged — they duplicate what the code itself shows. Claude Code's native Plan Mode and TodoWrite already handle per-session execution; duplicating that in files adds maintenance cost without clear payoff for small-to-medium teams.
 
-**Graduate specs when features ship.** Specs are durable during design but their "what and why" framing decays as living documentation once the feature is running. When the feature is verified end-to-end, merge the spec's operational content into a runbook at `docs/<topic>.md` — operational facts stay current, design rationale is preserved as an appendix citing the original commit SHA, and the spec file is deleted outright (git history is the recovery path; `docs/specs/` should only hold active specs). The failure mode to avoid: two docs describing the same system, drifting apart silently. See Step 7.
+**Graduate specs when features ship.** Specs are durable during design but their "what and why" framing decays as living documentation once the feature is running. When the feature is verified end-to-end, merge the spec's operational content into a runbook at `docs/<topic>.md`. The runbook keeps only what the code does NOT already show — operational procedures, gotchas, and the load-bearing design decisions that constrain future changes. Everything the code now embodies (architecture, data shapes, the full set of rejected alternatives) is dropped from the doc; the original spec lives on in git history (`git show <sha>:docs/specs/<file>`), cited once in the runbook. The spec file is deleted outright; `docs/specs/` should only hold active specs. The failure mode to avoid: two docs describing the same system — or a doc re-describing what the code already says — drifting apart silently. See Step 7.
 
 This skill is deliberately narrower than Superpowers-style workflows. It does two things: get a good spec committed before code starts, and retire that spec into a runbook once the feature ships.
 
@@ -137,15 +137,20 @@ Specs are durable during design but decay as living documentation after ship. Wh
 
 If any open questions remain unresolved, the feature isn't done. Close them (or explicitly mark "defer to v2") before graduating.
 
+**The guiding rule:** a runbook holds only what the code does NOT already show. The shipped code is now the source of truth for *how it works* — architecture, data shapes, control flow. Re-describing that in the runbook re-creates exactly the duplication this skill rejects plan files for (see Philosophy). So graduation is mostly subtraction.
+
 **What moves where:**
 
 - **Operational facts** (files, resources, secrets, commands, configuration, endpoints) → runbook body at `docs/<topic>.md`. Living source of truth going forward.
-- **Design rationale** (Alternatives considered, Goals, Non-goals) → runbook appendix, typically titled "Design decisions" or "Background". Irreplaceable historical content that the runbook body doesn't need but future readers will. Cite the original spec's commit SHA in the appendix — that's the recovery path for anyone who wants the full historical spec (`git show <sha>:docs/specs/<file>.md`).
-- **Context** (the world before the feature existed) → usually drop. The runbook describes the world as it is, not as it was.
-- **Implementation notes** → split by purpose. Ongoing operational caveats move to the runbook body; one-time ordering constraints that are now irrelevant get dropped.
+- **Load-bearing design decisions** → a short "Design decisions" note in the runbook (or appendix). Keep ONLY the decisions that constrain future changes — the ones where someone editing the code later would otherwise undo a deliberate choice ("rotate on every use, not sliding-window — clock-skew fragility"). One or two lines each, not the full Alternatives section. Cite the original spec's commit SHA once so the complete historical record is recoverable via `git show <sha>:docs/specs/<file>.md`.
+- **Architecture / data shapes / the full Alternatives list** → drop from the doc. The code embodies the design; git holds the full rationale. Do not copy these into the runbook.
+- **Context** (the world before the feature existed) → drop. The runbook describes the world as it is, not as it was.
+- **Implementation notes** → split by purpose. Ongoing operational caveats (gotchas, cache-invalidation traps) move to the runbook body; one-time ordering constraints that are now irrelevant get dropped.
 - **Open questions** → all must be resolved (or deferred to a named follow-up) before graduation.
 
-**Delete, don't stub.** After the rationale has moved into the runbook's appendix (with the commit SHA cited for recovery), `git rm` the spec file. Do not leave a one-line stub behind. Git history preserves the original; `docs/specs/` should only contain active specs, not tombstones, so the directory listing stays an honest signal of "what's in flight".
+When in doubt about a piece of design prose, ask: "can a reader recover this by reading the code?" If yes, drop it. If no and it constrains future edits, keep it as a one-liner. Otherwise it lives in git history.
+
+**Delete, don't stub.** Once the load-bearing decisions are captured (with the commit SHA cited for recovery), `git rm` the spec file. Do not leave a one-line stub behind. Git history preserves the original; `docs/specs/` should only contain active specs, not tombstones, so the directory listing stays an honest signal of "what's in flight".
 
 **Update references BEFORE deleting.** Any file in the repo that points at the old spec path will break once the spec is deleted. Grep the repo first and redirect every hit to the runbook:
 
@@ -249,8 +254,8 @@ Once the feature ships, before declaring the spec graduated:
 - [ ] Feature verified end-to-end in its real environment (cite the verification — e.g., CI run URL, first production event, user confirmation)
 - [ ] All open questions resolved or moved to a named follow-up spec
 - [ ] Runbook at `docs/<topic>.md` contains all operational content (secrets, setup, commands, troubleshooting)
-- [ ] Design rationale (Alternatives considered, Goals, Non-goals) preserved as an appendix in the runbook
-- [ ] Runbook appendix cites the original spec's commit SHA so the full historical spec is recoverable via `git show <sha>:docs/specs/<filename>`
+- [ ] Load-bearing design decisions (the ones that constrain future edits) kept as short one-liners; full Alternatives list, architecture, and data shapes NOT copied into the runbook (the code shows them)
+- [ ] Runbook cites the original spec's commit SHA so the full historical spec is recoverable via `git show <sha>:docs/specs/<filename>`
 - [ ] References to the spec path updated across the codebase — verified with `grep -rn "docs/specs/<filename>"` returning no hits outside the spec itself
 - [ ] Spec file deleted with `git rm` (no stub left behind)
 - [ ] Graduation commit created with message `docs: graduate <topic> spec to runbook`

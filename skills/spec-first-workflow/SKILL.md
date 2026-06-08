@@ -1,6 +1,6 @@
 ---
 name: spec-first-workflow
-description: Use BEFORE non-trivial feature work (new features, components, refactors spanning 3+ files). Brainstorms requirements, writes a committed spec to docs/specs/YYYY-MM-DD-<topic>.md, then hands off to Plan Mode + TodoWrite. Does NOT create plan files — specs are committed, plans are session-scoped. After the feature ships and is verified, graduate the spec: merge operational content into a living runbook at docs/<topic>.md, update references, and delete the spec file (no stub left behind — git history is the recovery path). Trigger on "let's build X", "implement Y", "refactor Z", or when the user describes a feature idea before asking for code. Also trigger when a shipped feature's spec still lives in docs/specs/ and the user asks about cleanup, consolidation, or runbook creation.
+description: EXPLICIT-INVOCATION ONLY — do NOT auto-trigger. A spec-driven workflow for non-trivial feature work: brainstorms requirements, writes a committed spec to docs/specs/YYYY-MM-DD-<topic>.md, hands off to Plan Mode + TodoWrite, and later graduates the spec into a runbook. Invoke ONLY when the user explicitly asks for it by name — "/spec-first-workflow", "spec first", "스펙 먼저", "write a spec", "spec-first로 진행", or an equally direct request to run this workflow. Do NOT trigger merely because the user says "let's build X", "implement Y", or "refactor Z" — those alone are not enough. Also invoke when the user explicitly asks to graduate or clean up a spec that still lives in docs/specs/.
 ---
 
 # Spec-First Workflow
@@ -17,21 +17,16 @@ This skill is deliberately narrower than Superpowers-style workflows. It does tw
 
 ## When to invoke
 
-Invoke this skill BEFORE starting any of:
+**This skill is opt-in only. It never auto-triggers.** Run it ONLY when the user explicitly asks for it — by name (`/spec-first-workflow`), or with a direct request like "spec first", "스펙 먼저 써줘", "write a spec for this", "let's do this spec-first". A plain "let's build X" / "implement Y" / "refactor Z" is NOT an invocation; just build it normally.
+
+Once explicitly invoked, the skill fits best when the work is non-trivial:
 
 - A new feature, component, module, or service
 - Non-trivial additions to existing code (anything spanning 3+ files, or introducing new concepts)
 - Refactoring that changes behavior, architecture, or public API
 - Anything where "write code first and iterate" would be measurably worse than thinking first
 
-Do NOT invoke this skill for:
-
-- Bug fixes with obvious scope (one file, clear root cause)
-- Typos, renames, dependency bumps, formatting
-- Exploratory debugging — use a debugging approach instead
-- Questions where the user just wants to discuss, not build
-
-When in doubt, ask the user: "This feels substantial enough to spec first — want me to run through the spec-first workflow, or is this smaller than it sounds?"
+If the user explicitly invokes it for something trivial (a typo, a rename, a one-file bug fix), say so and offer to skip the ceremony: "This is small enough that a spec is overhead — want me to just make the change?"
 
 ## Workflow
 

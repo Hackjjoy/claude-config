@@ -21,6 +21,9 @@ history.jsonl
 .last-cleanup
 .last-update-result.json
 mcp-needs-auth-cache.json
+policy-limits.json
+remote-settings.json
+vscode-claude-status-cache.json
 
 node_modules/
 session-env/

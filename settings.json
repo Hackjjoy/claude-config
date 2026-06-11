@@ -18,10 +18,16 @@
       "Bash(curl *)",
       "WebSearch",
       "WebFetch",
-      "Bash(mkdir *)"
+      "Bash(mkdir *)",
+      "Bash(dotnet build *)",
+      "Bash(lsof -nP -iTCP:7071 -sTCP:LISTEN)",
+      "Bash(lsof -nP -iTCP:9099 -sTCP:LISTEN)",
+      "Bash(lsof -nP -iTCP:8888 -sTCP:LISTEN)",
+      "Bash(npx --yes firebase-tools emulators:start --only auth --project demo-local)"
     ],
     "defaultMode": "auto"
   },
+  "model": "claude-fable-5[1m]",
   "hooks": {
     "Stop": [
       {
@@ -81,6 +87,7 @@
     }
   },
   "syntaxHighlightingDisabled": true,
+  "effortLevel": "high",
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
   "skipAutoPermissionPrompt": true,

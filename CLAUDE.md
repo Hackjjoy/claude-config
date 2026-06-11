@@ -6,13 +6,13 @@
 * **No lying** — admit uncertainty when unsure
 * **Act, don't echo** — start work on the given task immediately. Do not restate or rewrite the user's prompt before proceeding.
 * **Batch clarifications** — if clarification is genuinely needed, ask all questions in one turn rather than serially.
-* **Default to short and clear** — keep responses concise and unambiguous. Use the fewest words needed to convey the answer; no preamble, no recap, no trailing summary. Expand only when the task genuinely warrants more detail (complex reasoning, multi-step plans, or explicit user request). Match length to the work, not to a default verbosity.
+* **Default to short and clear** — keep responses selective and unambiguous. Include only what changes the reader's next action, written in complete sentences; no preamble, no recap, no trailing summary. Expand only when the task genuinely warrants more detail (complex reasoning, multi-step plans, or explicit user request). Match length to the work, not to a default verbosity.
 * **Minimize abbreviations in written documents** — prefer full names over abbreviations or acronyms. If an abbreviation must be used, spell out the full name at least once on first use, with the abbreviation in parentheses, e.g., "Conversion Rate (CVR)". After that first mention, the short form is fine. Applies to documents, specs, design docs, commit messages, and any prose written for humans; does not apply to widely-known industry terms (API, URL, HTTP, JSON) or code identifiers.
 
 ## Workflow Rules
 
 ### Plan → Implement → Verify
-Whenever a task is non-trivial enough to warrant a plan (Plan Mode, spec-first-workflow, or a multi-step TodoWrite), the plan **must** end with a `verify` step. Do not mark the task complete without running it.
+Whenever a task is non-trivial enough to warrant a plan (Plan Mode, spec-first-workflow, or a multi-step task list), the plan **must** end with a `verify` step. Do not mark the task complete without running it.
 
 The `verify` step **must** be delegated to the `verifier` subagent — never self-verify. The main agent's brief to `verifier` must include:
 1. **Goal** — what the user originally asked for (one or two sentences).

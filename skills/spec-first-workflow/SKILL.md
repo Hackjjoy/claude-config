@@ -1,15 +1,15 @@
 ---
 name: spec-first-workflow
-description: EXPLICIT-INVOCATION ONLY — do NOT auto-trigger. A spec-driven workflow for non-trivial feature work: brainstorms requirements, writes a committed spec to docs/specs/YYYY-MM-DD-<topic>.md, hands off to Plan Mode + TodoWrite, and later graduates the spec into a runbook. Invoke ONLY when the user explicitly asks for it by name — "/spec-first-workflow", "spec first", "스펙 먼저", "write a spec", "spec-first로 진행", or an equally direct request to run this workflow. Do NOT trigger merely because the user says "let's build X", "implement Y", or "refactor Z" — those alone are not enough. Also invoke when the user explicitly asks to graduate or clean up a spec that still lives in docs/specs/.
+description: EXPLICIT-INVOCATION ONLY — do NOT auto-trigger. A spec-driven workflow for non-trivial feature work: brainstorms requirements, writes a committed spec to docs/specs/YYYY-MM-DD-<topic>.md, hands off to Plan Mode + a task list, and later graduates the spec into a runbook. Invoke ONLY when the user explicitly asks for it by name — "/spec-first-workflow", "spec first", "스펙 먼저", "write a spec", "spec-first로 진행", or an equally direct request to run this workflow. Do NOT trigger merely because the user says "let's build X", "implement Y", or "refactor Z" — those alone are not enough. Also invoke when the user explicitly asks to graduate or clean up a spec that still lives in docs/specs/.
 ---
 
 # Spec-First Workflow
 
-A lightweight spec-driven approach for team codebases: commit the "what and why" as a spec, then let Claude Code's Plan Mode and TodoWrite handle execution tracking. No plan files, no artifact drift.
+A lightweight spec-driven approach for team codebases: commit the "what and why" as a spec, then let Claude Code's Plan Mode and task list handle execution tracking. No plan files in the repo, no artifact drift.
 
 ## Philosophy
 
-**Commit specs, not plans.** Specs describe intent and remain useful for months. Plans describe execution sequence and go stale the moment they're merged — they duplicate what the code itself shows. Claude Code's native Plan Mode and TodoWrite already handle per-session execution; duplicating that in files adds maintenance cost without clear payoff for small-to-medium teams.
+**Commit specs, not plans.** Specs describe intent and remain useful for months. Plans describe execution sequence and go stale the moment they're merged — they duplicate what the code itself shows. Claude Code's native Plan Mode and task list already handle per-session execution; duplicating that in committed files adds maintenance cost without clear payoff for small-to-medium teams.
 
 **Graduate specs when features ship.** Specs are durable during design but their "what and why" framing decays as living documentation once the feature is running. When the feature is verified end-to-end, merge the spec's operational content into a runbook at `docs/<topic>.md`. The runbook keeps only what the code does NOT already show — operational procedures, gotchas, and the load-bearing design decisions that constrain future changes. Everything the code now embodies (architecture, data shapes, the full set of rejected alternatives) is dropped from the doc; the original spec lives on in git history (`git show <sha>:docs/specs/<file>`), cited once in the runbook. The spec file is deleted outright; `docs/specs/` should only hold active specs. The failure mode to avoid: two docs describing the same system — or a doc re-describing what the code already says — drifting apart silently. See Step 7.
 
@@ -119,10 +119,10 @@ After user approval, commit the spec as its own commit with message `spec: <topi
 After the spec is committed:
 
 - **Do NOT create a plan file.** No `docs/plans/`, no `PLAN.md`, no `TASKS.md` in the repo.
-- Ask the user to `Shift+Tab` into Plan Mode when they're ready to implement. Claude Code's Plan Mode is a user-controlled UI mode — Claude cannot enter it on the user's behalf; it can only suggest the toggle.
-- Use TodoWrite to track tasks during execution. Reference the spec when useful: TodoWrite items can say things like "Implement §Design.AuthFlow step 2 (see spec)".
+- Offer to enter Plan Mode when the user is ready to implement. Claude can request the switch itself via the EnterPlanMode tool (the user approves it), or the user can toggle manually with `Shift+Tab`.
+- Use the task list (TaskCreate/TaskUpdate) to track tasks during execution. Reference the spec when useful: task items can say things like "Implement §Design.AuthFlow step 2 (see spec)".
 
-The spec is the durable artifact during implementation. The plan is ephemeral — it lives in the session and dies with it, by design. Once the feature ships, graduate the spec (Step 7).
+The spec is the durable team artifact during implementation. The plan never enters the repo — Plan Mode saves its plan files under `~/.claude/plans/`, outside version control, by design. Once the feature ships, graduate the spec (Step 7).
 
 ### Step 7 — Graduate the spec (when the feature ships)
 
@@ -165,15 +165,9 @@ Typical hits: error messages in scripts, code comments, CI templates, other spec
 
 ## Exceptions
 
-### Multi-session work (scratch plans allowed)
+### Multi-session work
 
-For work that will clearly span multiple sessions (days, not hours), a local scratch plan is acceptable IF:
-
-- It lives at `.claude/plans/<topic>.md`
-- `.claude/plans/` is in `.gitignore` (check and add if missing)
-- It is treated as disposable — no review, no archiving, deleted when the feature merges
-
-This exists ONLY for session recovery — so the user can come back tomorrow and not lose context. It is not a team artifact. Never commit it. Never propose it unless the user has indicated the work is multi-session; assume work fits in one session by default.
+No special handling needed. Plan Mode persists its plan files under `~/.claude/plans/` (outside the repo), so a multi-day feature resumes from the saved plan without any scratch file in the project. Do not create repo-local plan files for session recovery, and do not add `.claude/plans/` gitignore plumbing — the native plan file already covers it. The rule is unchanged: plans live outside version control, specs live in it.
 
 ### User explicitly wants a committed plan
 
@@ -238,7 +232,7 @@ Before declaring the spec phase done, verify all of:
 - [ ] No placeholder text (TODO/FIXME/"decide later"), no contradictions, no unresolved ambiguity in the body (unresolved items belong in Open questions)
 - [ ] User reviewed and approved the written spec
 - [ ] `git log` shows a commit with message matching `spec: <topic>`
-- [ ] User told "ready to implement — Shift+Tab into Plan Mode when you want to start" (or implementation has been explicitly deferred)
+- [ ] User told "ready to implement — I can enter Plan Mode when you want to start" (or implementation has been explicitly deferred)
 
 If any box is unchecked, the workflow is not complete.
 

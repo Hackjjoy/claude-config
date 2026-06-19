@@ -27,6 +27,7 @@ Skip the verify step only when: (a) the change is a single trivial edit (typo, c
 ## Environment
 
 * Do not use UTF-8 emoji in terminal output
+* **On Windows, operate on a git bash basis** — assume a Git Bash (POSIX `sh`) shell, not PowerShell or `cmd.exe`. Use Unix-style syntax: forward slashes in paths, `$VAR` for variables, `/dev/null`, `&&`/`||` chaining, single-quoted strings, and standard POSIX tools (`ls`, `grep`, `sed`, `rm -rf`). Do not emit PowerShell cmdlets (`Get-ChildItem`, `Set-Location`), `%VAR%`/`$env:VAR`, or backslash paths unless a command genuinely requires a native Windows path.
 
 ## Language-Specific Conventions
 

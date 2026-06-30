@@ -11,21 +11,34 @@ CURRENT_DIR=$(basename "$PWD")
 TITLE="Claude Code"
 MESSAGE="Task finished in ${CURRENT_DIR}"
 
+# Run a command with a hard time limit so a slow/hung notifier can never
+# block this Stop hook (which would freeze the turn at "running stop hooks").
+# macOS ships no `timeout`/`gtimeout`, so implement it with a watchdog.
+with_timeout() {
+  local secs="$1"; shift
+  "$@" & local pid=$!
+  ( sleep "$secs"; kill -9 "$pid" 2>/dev/null ) >/dev/null 2>&1 & local killer=$!
+  wait "$pid" 2>/dev/null
+  kill "$killer" 2>/dev/null; wait "$killer" 2>/dev/null
+}
+
 # 1) Terminal bell (works in VS Code integrated terminal on every OS)
 { printf '\a' > /dev/tty; } 2>/dev/null || printf '\a' >&2
 
 # 2) System notification banner, by platform
 case "$(uname -s)" in
   Darwin)
+    # NOTE: terminal-notifier's `-sender <bundle-id>` flag hangs indefinitely
+    # on recent macOS (it blocks trying to impersonate the sender app), which
+    # stalls the Stop hook. Do NOT pass -sender. Calls are also time-boxed.
     if command -v terminal-notifier >/dev/null 2>&1; then
-      terminal-notifier \
+      with_timeout 5 terminal-notifier \
         -title "$TITLE" \
         -message "$MESSAGE" \
         -group "claude-code-${CURRENT_DIR}" \
-        -sender com.microsoft.VSCode \
         >/dev/null 2>&1
     elif command -v osascript >/dev/null 2>&1; then
-      osascript -e "display notification \"${MESSAGE}\" with title \"${TITLE}\"" >/dev/null 2>&1
+      with_timeout 5 osascript -e "display notification \"${MESSAGE}\" with title \"${TITLE}\"" >/dev/null 2>&1
     fi
     ;;
 

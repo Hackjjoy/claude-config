@@ -43,20 +43,12 @@ case "$(uname -s)" in
     ;;
 
   MINGW*|MSYS*|CYGWIN*|Windows_NT)
-    # Pass strings via env vars to avoid shell/PowerShell quoting issues.
+    # Delegate to win-toast.ps1: it shows the toast AND wires up click-to-focus
+    # so clicking the banner brings this terminal's window to the foreground.
+    # Strings are passed via env vars to avoid shell/PowerShell quoting issues.
+    WIN_TOAST="$(cygpath -w "$(dirname "$0")/win-toast.ps1")"
     CC_NOTIF_TITLE="$TITLE" CC_NOTIF_MSG="$MESSAGE" \
-    powershell.exe -NoProfile -ExecutionPolicy Bypass -Command '
-      try {
-        [Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] | Out-Null
-        $t = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent([Windows.UI.Notifications.ToastTemplateType]::ToastText02)
-        $x = $t.GetElementsByTagName("text")
-        $x.Item(0).AppendChild($t.CreateTextNode($env:CC_NOTIF_TITLE)) | Out-Null
-        $x.Item(1).AppendChild($t.CreateTextNode($env:CC_NOTIF_MSG)) | Out-Null
-        $appId = "{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\WindowsPowerShell\v1.0\powershell.exe"
-        $toast = [Windows.UI.Notifications.ToastNotification]::new($t)
-        [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier($appId).Show($toast)
-      } catch { }
-    ' >/dev/null 2>&1
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$WIN_TOAST" >/dev/null 2>&1
     ;;
 
   Linux)

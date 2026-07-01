@@ -87,9 +87,9 @@
     }
   },
   "syntaxHighlightingDisabled": true,
+  "effortLevel": "xhigh",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
-  "skipAutoPermissionPrompt": true,
-  "effortLevel": "xhigh"
+  "skipAutoPermissionPrompt": true
 }
